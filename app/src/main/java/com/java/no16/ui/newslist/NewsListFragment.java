@@ -1,11 +1,8 @@
 package com.java.no16.ui.newslist;
 
-import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -25,10 +22,11 @@ import com.java.no16.R;
 import com.java.no16.protos.SimpleNews;
 import com.java.no16.supplier.NewsListSupplier;
 import com.java.no16.ui.widget.DividerOffsetDecoration;
-import com.java.no16.ui.widget.PullToRefreshLayout;
 import com.java.no16.ui.widget.RecyclerItemClickListener;
 import com.java.no16.ui.widget.RefreshLayout;
 import com.java.no16.util.ThreadPool;
+import com.jwenfeng.library.pulltorefresh.PullToRefreshLayout;
+import com.jwenfeng.library.pulltorefresh.BaseRefreshListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,17 +46,15 @@ public class NewsListFragment extends Fragment implements Updatable {
     private LinearLayoutManager mLayoutManager;
     private List<SimpleNews> mNewsList;
     private NewsListAdapter mAdapter;
-    private ProgressBar mProgressBar;
-    RefreshLayout refreshLayout;
+    PullToRefreshLayout mRefreshLayout;
 
     private int page = 0;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_newslist, null);
-        mProgressBar = (ProgressBar) view.findViewById(R.id.progressBar);
 
-        initRefreshView(view);
+        initRefreshLayout(view);
         initRecyclerView(view);
         initRepository(view);
         initAdapter(view);
@@ -81,27 +77,22 @@ public class NewsListFragment extends Fragment implements Updatable {
 
     @Override
     public void update() {
-        mProgressBar.setVisibility(View.GONE);
-        refreshLayout.setRefreshing(false);
         repository.get().ifFailedSendTo(throwableReceiver).ifSucceededSendTo(receiver);
     }
 
-    private void initRefreshView(View view) {
-        refreshLayout = (RefreshLayout) view.findViewById(R.id.refresh_layout);
-        refreshLayout.setColorSchemeResources(R.color.google_blue,
-                R.color.google_green,
-                R.color.google_red,
-                R.color.google_yellow);
-        refreshLayout.setOnRefreshListener(new PullToRefreshLayout.OnRefreshListener() {
+    private void initRefreshLayout(View view) {
+        mRefreshLayout = (PullToRefreshLayout) view.findViewById(R.id.refresh_layout);
+        mRefreshLayout.setRefreshListener(new BaseRefreshListener() {
             @Override
-            public void onRefresh() {
+            public void refresh() {
                 getLatestData();
+                mRefreshLayout.finishRefresh();
             }
-        });
-        refreshLayout.setOnLoadListener(new RefreshLayout.OnLoadListener() {
+
             @Override
-            public void onLoad() {
-                getHistoryData();
+            public void loadMore() {
+                getLatestData();
+                mRefreshLayout.finishLoadMore();
             }
         });
     }

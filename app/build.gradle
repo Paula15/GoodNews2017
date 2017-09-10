@@ -50,4 +50,6 @@ dependencies {
 
     compile 'com.google.android.agera:agera:1.3.0'
     compile 'com.squareup.picasso:picasso:2.5.2'
+
+    compile 'com.jwenfeng.pulltorefresh:library:1.2.5'
 }
