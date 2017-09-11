@@ -6,6 +6,7 @@ import android.util.Log;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.java.no16.protos.Category;
+import com.java.no16.protos.ImageUrlJsonParser;
 import com.java.no16.protos.NewsException;
 import com.java.no16.protos.SimpleNews;
 import com.java.no16.protos.SimpleNewsList;
@@ -13,6 +14,7 @@ import com.java.no16.protos.SimpleNewsList;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 
 import okhttp3.ResponseBody;
@@ -34,6 +36,10 @@ public class GetSearchResultService {
         @GET("action/query/search")
         @ConverterType("SimpleNewsList")
         Call<SimpleNewsList> getSearchResultByCategory(@Query("keyword") String keyword, @Query("pageNo") int pageNo, @Query("pageSize") int pageSize, @Query("category") int category);
+
+        @GET("https://image.baidu.com/search/avatarjson")
+        @ConverterType("String")
+        Call<ImageUrlJsonParser> getMissedImage(@Query("tn") String tn, @Query("ie") String ie, @Query("word") String keyword, @Query("pn") int pn, @Query("rn") int rn);
     }
 
     private static String SERVICE_NAME = "GetSearchResultService";
@@ -68,22 +74,58 @@ public class GetSearchResultService {
 
     /** Gets news list according to providing pageNo, pageSize, category. */
     public static @Nullable List<SimpleNews> getSearchResult(String keyword, int pageNo, int pageSize, Category category) {
+        List<SimpleNews> searchResult;
         if (category == Category.ALL) {
             try {
-                return
-                        searchResultHttpService.getSearchResult(keyword, pageNo, pageSize).execute().body().getSimpleNewsList();
+                searchResult = searchResultHttpService.getSearchResult(keyword, pageNo, pageSize).execute().body().getSimpleNewsList();
             } catch (IOException e) {
                 Log.e(NewsException.CONVERT_FROM_STRING_TO_JSON_ERROR, String.format(NewsException.CONVERT_FROM_STRING_TO_JSON_MESSAGE, "getSearchResult", SERVICE_NAME));
                 return null;
             }
         } else {
             try {
-                return
-                        searchResultHttpService.getSearchResultByCategory(keyword, pageNo, pageSize, category.ordinal()).execute().body().getSimpleNewsList();
+                searchResult = searchResultHttpService.getSearchResultByCategory(keyword, pageNo, pageSize, category.ordinal()).execute().body().getSimpleNewsList();
             } catch (IOException e) {
                 Log.e(NewsException.CONVERT_FROM_STRING_TO_JSON_ERROR, String.format(NewsException.CONVERT_FROM_STRING_TO_JSON_MESSAGE, "getSearchResult", SERVICE_NAME));
                 return null;
             }
+        }
+        for (SimpleNews simpleNews : searchResult) {
+            simpleNews.separateImageUrl();
+            simpleNews.setShowImage(CacheService.isShowImage());
+        }
+        return searchResult;
+    }
+
+    /** Gets categories in user's setting. */
+    public static List<Category> getCategoryList() {
+        return CacheService.getCategoryList();
+    }
+
+    /** Gets categories not in user's setting. */
+    public static List<Category> getUnusedCategoryList() {
+        List<Category> categories = CacheService.getCategoryList();
+        List<Category> unusedCategories = new ArrayList<>();
+        for (Category category : CacheService.getAllCategoryList()) {
+            if (!categories.contains(category)) {
+                unusedCategories.add(category);
+            }
+        }
+        return unusedCategories;
+    }
+
+    /** Sets categories to user's setting. */
+    public static void setCategoryList(List<Category> categories) {
+        CacheService.setCategoryList(categories);
+    }
+
+    /** Gets missing image with specified title. */
+    public static String getMissedImage(String title) {
+        try {
+            return searchResultHttpService.getMissedImage("resultjsonavatarnew", "utf-8", title, 0, 1).execute().body().getUrl();
+        } catch (IOException e) {
+            Log.e(NewsException.GET_IMAGE_ERROR, String.format(NewsException.GET_IMAGE_MESSAGE, title));
+            return "";
         }
     }
 }

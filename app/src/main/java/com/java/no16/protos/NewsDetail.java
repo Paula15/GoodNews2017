@@ -28,8 +28,6 @@ public class NewsDetail {
     @Expose
     private String content;
 
-    private boolean favorite;
-
     @SerializedName("news_Pictures")
     @Expose
     private String imageUrlString;
@@ -39,6 +37,10 @@ public class NewsDetail {
     @SerializedName("news_ID")
     @Expose
     private String newsId;
+
+    private boolean favorite;
+
+    private boolean showImage;
 
     public NewsDetail(String title, String author, String date, String content, boolean favorite, List<String> imageUrls, String newsId) {
         this.title = title;
@@ -122,5 +124,13 @@ public class NewsDetail {
 
     public void setNewsId(String newsId) {
         this.newsId = newsId;
+    }
+
+    public boolean isShowImage() {
+        return showImage;
+    }
+
+    public void setShowImage(boolean showImage) {
+        this.showImage = showImage;
     }
 }
