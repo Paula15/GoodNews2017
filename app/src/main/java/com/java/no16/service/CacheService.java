@@ -17,6 +17,8 @@ public class CacheService {
     /** List of categories which user needs. */
     private static List<Category> categoryList;
 
+    private static boolean showImage;
+
     /**
      * Initiates CacheService.
      * Please execute this method when starts the app.
@@ -47,5 +49,13 @@ public class CacheService {
 
     public static void setFavorite(String newsId, boolean favorite) {
         //TODO(bellasong)
+    }
+
+    public static boolean isShowImage() {
+        return showImage;
+    }
+
+    public static void setShowImage(boolean showImage) {
+        CacheService.showImage = showImage;
     }
 }

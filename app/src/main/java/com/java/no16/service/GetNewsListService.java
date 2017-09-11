@@ -93,10 +93,10 @@ public class GetNewsListService {
                 return null;
             }
         }
-        //TODO(wenj): Some image query provides non-exist url.
-        //TODO(wenj): Some query takes long time.
+
         for (SimpleNews simpleNews : newsList) {
             simpleNews.separateImageUrl();
+            simpleNews.setShowImage(CacheService.isShowImage());
         }
         return newsList;
     }

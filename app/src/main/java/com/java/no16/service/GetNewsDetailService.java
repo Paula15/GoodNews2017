@@ -74,6 +74,7 @@ public class GetNewsDetailService {
             return null;
         }
         newsDetail.setFavorite(CacheService.getFavorite(newsId));
+        newsDetail.setShowImage(CacheService.isShowImage());
         newsDetail.separateImageUrlString();
         if (newsDetail.getImageUrlsCount() == 0) {
             try {
