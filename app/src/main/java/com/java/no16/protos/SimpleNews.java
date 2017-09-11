@@ -102,7 +102,7 @@ public class SimpleNews implements Serializable {
         return description;
     }
 
-    public String getImageUrl() {
+    public @Nullable String getImageUrl() {
         return imageUrl;
     }
 
@@ -115,7 +115,7 @@ public class SimpleNews implements Serializable {
         if (imageUrls.trim().split(";|\\s+").length == 0) {
             imageUrl = null;
         } else {
-            imageUrl = imageUrls.trim().split(";")[0];
+            imageUrl = imageUrls.trim().split(";|\\s+")[0];
         }
     }
 }
