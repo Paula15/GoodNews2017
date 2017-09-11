@@ -20,9 +20,7 @@ import com.google.android.agera.Repository;
 import com.google.android.agera.Result;
 import com.google.android.agera.Updatable;
 import com.java.no16.R;
-import com.java.no16.protos.NewsDetail;
 import com.java.no16.protos.SimpleNews;
-import com.java.no16.service.GetNewsDetailService;
 import com.java.no16.supplier.NewsListSupplier;
 import com.java.no16.ui.newsdetail.NewsDetailActivity;
 import com.java.no16.ui.widget.DividerOffsetDecoration;
@@ -51,8 +49,10 @@ public class NewsListFragment extends Fragment implements Updatable {
     private NewsListAdapter mAdapter;
     private PullToRefreshLayout mRefreshLayout;
 
-    private boolean mIsLoading = true;
-    private int mPastNewsNum, mCurrentNewsNum, mTotalNewsNum;
+    private final int PAGE_SIZE = 20;
+    enum Status { REFRESHING, LOADING, NORMAL }
+
+    private Status mStatus = Status.REFRESHING;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -62,7 +62,7 @@ public class NewsListFragment extends Fragment implements Updatable {
         initRecyclerView(view);
         initRepository(view);
         initAdapter(view);
-        getLatestData();
+        doRefresh();
 
         return view;
     }
@@ -84,19 +84,38 @@ public class NewsListFragment extends Fragment implements Updatable {
         mRepository.get().ifFailedSendTo(mThrowableReceiver).ifSucceededSendTo(mReceiver);
     }
 
+    private void doRefresh() {
+        // TODO(zpzhou)
+        mObservable.refreshNews(1, PAGE_SIZE);
+    }
+
+    private void doLoadMore() {
+        // TODO(zpzhou)
+        int pageNo = mNewsList.size() / PAGE_SIZE + 1;
+        mObservable.refreshNews(pageNo, PAGE_SIZE);
+    }
+
     private void initRefreshLayout(View view) {
         mRefreshLayout = (PullToRefreshLayout) view.findViewById(R.id.refresh_layout);
         mRefreshLayout.setRefreshListener(new BaseRefreshListener() {
             @Override
             public void refresh() {
-                getLatestData();
-                Log.e("refresh", "REFRESH!!!!!!!!!!!!!!!!!!!!!!!!!");
+                // TODO(zpzhou)
+                if (mStatus == Status.NORMAL) {
+                    mStatus = Status.REFRESHING;
+                    doRefresh();
+                    Log.e("REFRESHING!!!!!!!!", "size = " + mNewsList.size());
+                }
             }
 
             @Override
             public void loadMore() {
-                getLatestData();
-                Log.e("loadMore", "LOAD!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+                if (mStatus == Status.NORMAL &&
+                        mLayoutManager.findLastCompletelyVisibleItemPosition() == mLayoutManager.getItemCount() - 1) {
+                    mStatus = Status.LOADING;
+                    doLoadMore();
+                    Log.e("LOADING!!!!!!!!!!!", "size = " + mNewsList.size());
+                }
             }
         });
     }
@@ -124,9 +143,21 @@ public class NewsListFragment extends Fragment implements Updatable {
 
             @Override
             public void accept(@NonNull List<SimpleNews> value) {
-                mAdapter.addData(value);
+                switch (mStatus) {
+                    case NORMAL:
+                        break;
+                    case REFRESHING:
+                        mAdapter.updateData(value);
+                        break;
+                    case LOADING:
+                        mAdapter.addData(value);
+                        break;
+                    default:
+                        break;
+                }
                 mRefreshLayout.finishRefresh();
                 mRefreshLayout.finishLoadMore();
+                mStatus = Status.NORMAL;
             }
         };
 
@@ -155,15 +186,5 @@ public class NewsListFragment extends Fragment implements Updatable {
                 ActivityCompat.startActivity(getActivity(), intent, options.toBundle());
             }
         }));
-    }
-
-    private void getLatestData() {
-        // TODO(zpzhou)
-        mObservable.refreshNews();
-    }
-
-    private void getHistoryData() {
-        // TODO(zpzhou)
-        mObservable.refreshNews();
     }
 }

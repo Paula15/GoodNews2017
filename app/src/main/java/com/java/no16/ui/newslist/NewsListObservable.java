@@ -15,7 +15,9 @@ public class NewsListObservable extends BaseObservable {
         this.supplier = supplier;
     }
 
-    public void refreshNews() {
+    public void refreshNews(int pageNo, int pageSize) {
+        supplier.setPageNo(pageNo);
+        supplier.setPageSize(pageSize);
         dispatchUpdate();
     }
 }
