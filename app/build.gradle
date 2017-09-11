@@ -54,6 +54,7 @@ dependencies {
     compile 'com.github.ksoichiro:android-observablescrollview:1.6.0'
 
     compile 'com.jwenfeng.pulltorefresh:library:1.2.5'
+    releaseCompile "com.github.ksoichiro:android-observablescrollview:+"
 
     testCompile 'junit:junit:4.12'
     //ADD THESE LINES:
