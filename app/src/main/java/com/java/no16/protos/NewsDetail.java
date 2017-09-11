@@ -1,5 +1,8 @@
 package com.java.no16.protos;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -9,15 +12,35 @@ import java.util.List;
  */
 public class NewsDetail {
 
+    @SerializedName("news_Title")
+    @Expose
     private String title;
+
+    @SerializedName("news_Author")
+    @Expose
     private String author;
+
+    @SerializedName("news_Time")
+    @Expose
     private String date;
+
+    @SerializedName("news_Content")
+    @Expose
     private String content;
-    private boolean favorite;
+
+    @SerializedName("news_Pictures")
+    @Expose
     private String imageUrlString;
 
     private List<String> imageUrls;
+
+    @SerializedName("news_ID")
+    @Expose
     private String newsId;
+
+    private boolean favorite;
+
+    private boolean showImage;
 
     public NewsDetail(String title, String author, String date, String content, boolean favorite, List<String> imageUrls, String newsId) {
         this.title = title;
@@ -101,5 +124,13 @@ public class NewsDetail {
 
     public void setNewsId(String newsId) {
         this.newsId = newsId;
+    }
+
+    public boolean isShowImage() {
+        return showImage;
+    }
+
+    public void setShowImage(boolean showImage) {
+        this.showImage = showImage;
     }
 }
