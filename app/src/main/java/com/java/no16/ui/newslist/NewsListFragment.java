@@ -86,13 +86,11 @@ public class NewsListFragment extends Fragment implements Updatable {
             @Override
             public void refresh() {
                 getLatestData();
-                mRefreshLayout.finishRefresh();
             }
 
             @Override
             public void loadMore() {
                 getLatestData();
-                mRefreshLayout.finishLoadMore();
             }
         });
     }
@@ -125,6 +123,8 @@ public class NewsListFragment extends Fragment implements Updatable {
                 } else{
                     mAdapter.updateData(value);
                 }
+                mRefreshLayout.finishRefresh();
+                mRefreshLayout.finishLoadMore();
             }
         };
 
