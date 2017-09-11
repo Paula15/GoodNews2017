@@ -1,0 +1,89 @@
+package com.java.no16.service;
+
+import android.support.annotation.Nullable;
+import android.util.Log;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.java.no16.protos.Category;
+import com.java.no16.protos.NewsException;
+import com.java.no16.protos.SimpleNews;
+import com.java.no16.protos.SimpleNewsList;
+
+import java.io.IOException;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Type;
+import java.util.List;
+
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Converter;
+import retrofit2.Retrofit;
+import retrofit2.http.GET;
+import retrofit2.http.Query;
+
+/**
+ * Service providing search view with corresponding data.
+ */
+public class GetSearchResultService {
+    interface SearchResultHttpService {
+        @GET("action/query/search")
+        @ConverterType("SimpleNewsList")
+        Call<SimpleNewsList> getSearchResult(@Query("keyword") String keyword, @Query("pageNo") int pageNo, @Query("pageSize") int pageSize);
+
+        @GET("action/query/search")
+        @ConverterType("SimpleNewsList")
+        Call<SimpleNewsList> getSearchResultByCategory(@Query("keyword") String keyword, @Query("pageNo") int pageNo, @Query("pageSize") int pageSize, @Query("category") int category);
+    }
+
+    private static String SERVICE_NAME = "GetSearchResultService";
+
+    private static GetSearchResultService.SearchResultHttpService searchResultHttpService;
+
+    /**
+     * Initiates GetSearchResultService.
+     * Please execute this method when starts the app.
+     * */
+    public static void initService() {
+        Retrofit retrofit = new Retrofit.Builder().baseUrl("http://166.111.68.66:2042/news/")
+                .addConverterFactory(new Converter.Factory() {
+                    Gson gson = new Gson();
+
+                    @Override
+                    public Converter<ResponseBody, ?> responseBodyConverter(final Type type, final Annotation[] annotations, Retrofit retrofit) {
+                        return new Converter<ResponseBody, Object>() {
+                            @Override
+                            public Object convert(ResponseBody value) throws IOException {
+                                try {
+                                    return gson.getAdapter(TypeToken.get(type)).fromJson(value.charStream());
+                                } finally {
+                                    value.close();
+                                }
+                            }
+                        };
+                    }
+                }).build();
+        searchResultHttpService = retrofit.create(GetSearchResultService.SearchResultHttpService.class);
+    }
+
+    /** Gets news list according to providing pageNo, pageSize, category. */
+    public static @Nullable List<SimpleNews> getSearchResult(String keyword, int pageNo, int pageSize, Category category) {
+        if (category == Category.ALL) {
+            try {
+                return
+                        searchResultHttpService.getSearchResult(keyword, pageNo, pageSize).execute().body().getSimpleNewsList();
+            } catch (IOException e) {
+                Log.e(NewsException.CONVERT_FROM_STRING_TO_JSON_ERROR, String.format(NewsException.CONVERT_FROM_STRING_TO_JSON_MESSAGE, "getSearchResult", SERVICE_NAME));
+                return null;
+            }
+        } else {
+            try {
+                return
+                        searchResultHttpService.getSearchResultByCategory(keyword, pageNo, pageSize, category.ordinal()).execute().body().getSimpleNewsList();
+            } catch (IOException e) {
+                Log.e(NewsException.CONVERT_FROM_STRING_TO_JSON_ERROR, String.format(NewsException.CONVERT_FROM_STRING_TO_JSON_MESSAGE, "getSearchResult", SERVICE_NAME));
+                return null;
+            }
+        }
+    }
+}

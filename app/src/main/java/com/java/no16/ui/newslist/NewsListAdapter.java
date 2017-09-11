@@ -51,6 +51,7 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.ViewHo
         SimpleNews simpleNews = mNewsList.get(position);
         holder.newsTitleTV.setText(mNewsList.get(position).getTitle());
         Glide.clear(holder.newsIV);
+        Log.e("ErrorImg", simpleNews.getImageUrl());
         Glide.with(holder.newsIV.getContext())
                 .load(simpleNews.getImageUrl())
                 .centerCrop()
