@@ -99,7 +99,7 @@ public class NewsDetail {
 
     /** Separates imageUrlString into a list of image url. */
     public void separateImageUrlString() {
-        imageUrls = Arrays.asList(imageUrlString.trim().split(";| "));
+        imageUrls = Arrays.asList(imageUrlString.trim().split(";|\\s+"));
     }
 
     public String getNewsId() {

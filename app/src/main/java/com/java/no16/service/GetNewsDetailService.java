@@ -60,7 +60,7 @@ public class GetNewsDetailService {
     }
 
     /** Gets news detail with newsId. */
-    public NewsDetail getNewsDetail(String newsId) {
+    public static NewsDetail getNewsDetail(String newsId) {
         NewsDetail newsDetail;
         try {
             newsDetail = newsdetailHttpService.getNewsDetail(newsId).execute().body();
@@ -73,7 +73,7 @@ public class GetNewsDetailService {
         return newsDetail;
     }
 
-    public void setFavorite(String newsId, boolean favorite) {
+    public static void setFavorite(String newsId, boolean favorite) {
         CacheService.setFavorite(newsId, favorite);
     }
 }

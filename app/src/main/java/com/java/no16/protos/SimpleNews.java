@@ -112,7 +112,7 @@ public class SimpleNews implements Serializable {
 
     /** Separates image urls into a list and set imageUrl with the first one. */
     public void separateImageUrl() {
-        if (imageUrls.trim().split(";| ").length == 0) {
+        if (imageUrls.trim().split(";|\\s+").length == 0) {
             imageUrl = null;
         } else {
             imageUrl = imageUrls.trim().split(";")[0];
