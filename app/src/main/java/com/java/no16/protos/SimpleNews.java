@@ -1,6 +1,7 @@
 package com.java.no16.protos;
 
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -115,10 +116,10 @@ public class SimpleNews implements Serializable {
     /** Separates image urls into a list and set imageUrl with the first one. */
     public void separateImageUrl() {
         List<String> images = Arrays.asList(imageUrls.trim().split(";|\\s+"));
-        if (images.size() == 0 || (images.size() == 1 || (images.get(0) == null || images.get(0).isEmpty()))) {
+        if (images.size() == 0 || (images.size() == 1 && (images.get(0) == null || images.get(0).isEmpty()))) {
             imageUrl = null;
         } else {
-            imageUrl = imageUrls.trim().split(";|\\s+")[0];
+            imageUrl = images.get(0);
         }
     }
 }

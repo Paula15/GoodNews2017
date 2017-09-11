@@ -97,14 +97,6 @@ public class GetNewsListService {
         //TODO(wenj): Some query takes long time.
         for (SimpleNews simpleNews : newsList) {
             simpleNews.separateImageUrl();
-            if (simpleNews.getImageUrl() == null) {
-                try {
-                    simpleNews.setImageUrl(
-                            newsListHttpService.getMissedImage("resultjsonavatarnew", "utf-8", simpleNews.getTitle(), 0, 1).execute().body().getUrl());
-                } catch (IOException e) {
-                    Log.e(NewsException.GET_IMAGE_ERROR, String.format(NewsException.GET_IMAGE_MESSAGE, simpleNews.getTitle()));
-                }
-            }
         }
         return newsList;
     }
@@ -129,5 +121,15 @@ public class GetNewsListService {
     /** Sets categories to user's setting. */
     public static void setCategoryList(List<Category> categories) {
         CacheService.setCategoryList(categories);
+    }
+
+    /** Gets missing image with specified title. */
+    public static String getMissedImage(String title) {
+        try {
+            return newsListHttpService.getMissedImage("resultjsonavatarnew", "utf-8", title, 0, 1).execute().body().getUrl();
+        } catch (IOException e) {
+            Log.e(NewsException.GET_IMAGE_ERROR, String.format(NewsException.GET_IMAGE_MESSAGE, title));
+            return "";
+        }
     }
 }

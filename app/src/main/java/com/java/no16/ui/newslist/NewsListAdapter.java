@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.java.no16.R;
 import com.java.no16.protos.SimpleNews;
+import com.java.no16.service.GetNewsListService;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -51,9 +52,6 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.ViewHo
         SimpleNews simpleNews = mNewsList.get(position);
         holder.newsTitleTV.setText(mNewsList.get(position).getTitle());
         Glide.clear(holder.newsIV);
-        
-        Log.e("ErrorImg", position + "=> " + simpleNews.getImageUrl());
-        Log.e("ErrorImg[0]", position + "=> " + simpleNews.getImageUrl().split("\\s+")[0]);
 
         Glide.with(holder.newsIV.getContext())
                 .load(simpleNews.getImageUrl())
