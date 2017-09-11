@@ -10,4 +10,8 @@
     <color name="google_blue">#0057e7</color>
     <color name="google_green">#008744</color>
     <color name="google_yellow">#ffa700</color>
+    <color name="primary">#009688</color>
+    <color name="primaryDark">#00796b</color>
+    <color name="accent">#eeff41</color>
+    <color name="accentLight">#F4FF81</color>
 </resources>

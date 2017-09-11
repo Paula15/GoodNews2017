@@ -1,4 +1,4 @@
-package com.java.no16.common;
+package com.java.no16.ui.common;
 
 import android.support.v7.app.AppCompatActivity;
 

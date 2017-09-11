@@ -2,6 +2,8 @@ package com.java.no16.ui.newsdetail;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.Toolbar;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -13,10 +15,9 @@ import com.google.android.agera.Repository;
 import com.google.android.agera.Result;
 import com.google.android.agera.Updatable;
 import com.java.no16.R;
-import com.java.no16.common.BaseActivity;
 import com.java.no16.protos.NewsDetail;
 import com.java.no16.supplier.NewsDetailSupplier;
-import com.java.no16.ui.widget.NewsToolbar;
+import com.java.no16.ui.common.BaseActivity;
 import com.java.no16.util.ThreadPool;
 
 /**
@@ -26,14 +27,14 @@ import com.java.no16.util.ThreadPool;
 public class NewsDetailActivity extends BaseActivity implements Updatable {
     Repository<Result<NewsDetail>> repository;
     NewsDetailObservable observable;
-    NewsToolbar toolbar;
+    Toolbar toolbar;
     ImageView imageView;
-    TextView titleTextView;
+    View titleTextView;
     TextView contentTextView;
     NewsDetailSupplier newsDetailSupplier;
     public static final String NEWS = "news_key";
 
-    private NewsDetail newsDetail;
+    private String newsDetail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,11 +45,13 @@ public class NewsDetailActivity extends BaseActivity implements Updatable {
     }
 
     protected void initView() {
-        toolbar = (NewsToolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         imageView = (ImageView) findViewById(R.id.ivImage);
-        titleTextView = (TextView) findViewById(R.id.titleText);
+        titleTextView = (View) findViewById(R.id.titleText);
         contentTextView = (TextView) findViewById(R.id.contentText);
-        newsDetail = getIntent().getParcelableExtra(NEWS);
+        newsDetailSupplier = new NewsDetailSupplier();
+        newsDetail = getIntent().getStringExtra(NEWS);
+        newsDetailSupplier.setKey(newsDetail);
     }
 
     @Override
@@ -65,7 +68,7 @@ public class NewsDetailActivity extends BaseActivity implements Updatable {
     @Override
     protected void onResume() {
         super.onResume();
-        newsDetailSupplier.setKey(String.valueOf(newsDetail.getNewsId()));
+        newsDetailSupplier.setKey(newsDetail);
         repository.addUpdatable(this);
     }
 
@@ -86,14 +89,15 @@ public class NewsDetailActivity extends BaseActivity implements Updatable {
             }).ifSucceededSendTo(new Receiver<NewsDetail>() {
                 @Override
                 public void accept(@NonNull final NewsDetail value) {
-                    titleTextView.setText(value.getTitle());
+                    newsDetail = value.getNewsId();
+                    toolbar.setTitle("ToolBar");
                     for (String image: value.getImageUrls()) {
                         Glide.with(NewsDetailActivity.this)
                                 .load(image)
                                 .asBitmap()
                                 .into(imageView);
                     }
-                    contentTextView.setText(value.getContent());
+                    contentTextView.setText(value.getTitle() + '\n' + value.getContent());
                 }
             });
         }
