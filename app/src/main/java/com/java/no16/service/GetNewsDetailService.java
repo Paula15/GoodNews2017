@@ -76,15 +76,17 @@ public class GetNewsDetailService {
         newsDetail.setFavorite(CacheService.getFavorite(newsId));
         newsDetail.setShowImage(CacheService.isShowImage());
         newsDetail.separateImageUrlString();
-        if (newsDetail.getImageUrlsCount() == 0) {
-            try {
-                newsDetail.addImageUrl(
-                        newsdetailHttpService.getMissedImage("resultjsonavatarnew", "utf-8", newsDetail.getTitle(), 0, 1).execute().body().getUrl());
-            } catch (IOException e) {
-                Log.e(NewsException.GET_IMAGE_ERROR, String.format(NewsException.GET_IMAGE_MESSAGE, newsDetail.getTitle()));
-            }
-        }
         return newsDetail;
+    }
+
+    /** Gets missing image with specified title. */
+    public static String getMissedImage(String title) {
+        try {
+            return newsdetailHttpService.getMissedImage("resultjsonavatarnew", "utf-8", title, 0, 1).execute().body().getUrl();
+        } catch (IOException e) {
+            Log.e(NewsException.GET_IMAGE_ERROR, String.format(NewsException.GET_IMAGE_MESSAGE, title));
+            return "";
+        }
     }
 
     public static void setFavorite(String newsId, boolean favorite) {
