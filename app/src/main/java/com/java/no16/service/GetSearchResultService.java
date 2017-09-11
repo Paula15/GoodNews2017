@@ -92,7 +92,6 @@ public class GetSearchResultService {
         }
         for (SimpleNews simpleNews : searchResult) {
             simpleNews.separateImageUrl();
-            simpleNews.setShowImage(CacheService.isShowImage());
         }
         return searchResult;
     }

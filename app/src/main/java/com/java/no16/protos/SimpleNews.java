@@ -43,8 +43,6 @@ public class SimpleNews implements Serializable {
 
     private boolean mark;
 
-    private boolean showImage;
-
     public SimpleNews(String newsId, String title, String author, String date, String description, String imageUrls, boolean mark) {
         this.newsId = newsId;
         this.title = title;
@@ -113,14 +111,6 @@ public class SimpleNews implements Serializable {
 
     public boolean isMark() {
         return mark;
-    }
-
-    public boolean isShowImage() {
-        return showImage;
-    }
-
-    public void setShowImage(boolean showImage) {
-        this.showImage = showImage;
     }
 
     /** Separates image urls into a list and set imageUrl with the first one. */

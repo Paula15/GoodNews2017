@@ -40,8 +40,6 @@ public class NewsDetail {
 
     private boolean favorite;
 
-    private boolean showImage;
-
     public NewsDetail(String title, String author, String date, String content, boolean favorite, List<String> imageUrls, String newsId) {
         this.title = title;
         this.author = author;
@@ -124,13 +122,5 @@ public class NewsDetail {
 
     public void setNewsId(String newsId) {
         this.newsId = newsId;
-    }
-
-    public boolean isShowImage() {
-        return showImage;
-    }
-
-    public void setShowImage(boolean showImage) {
-        this.showImage = showImage;
     }
 }

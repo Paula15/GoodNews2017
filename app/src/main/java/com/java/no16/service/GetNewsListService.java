@@ -96,7 +96,6 @@ public class GetNewsListService {
 
         for (SimpleNews simpleNews : newsList) {
             simpleNews.separateImageUrl();
-            simpleNews.setShowImage(CacheService.isShowImage());
         }
         return newsList;
     }
