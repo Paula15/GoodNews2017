@@ -6,6 +6,8 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Data structure providing simple news information.
@@ -112,7 +114,8 @@ public class SimpleNews implements Serializable {
 
     /** Separates image urls into a list and set imageUrl with the first one. */
     public void separateImageUrl() {
-        if (imageUrls.trim().split(";|\\s+").length == 0) {
+        List<String> images = Arrays.asList(imageUrls.trim().split(";|\\s+"));
+        if (images.size() == 0 || (images.size() == 1 || (images.get(0) == null || images.get(0).isEmpty()))) {
             imageUrl = null;
         } else {
             imageUrl = imageUrls.trim().split(";|\\s+")[0];

@@ -6,6 +6,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.java.no16.protos.NewsDetail;
 import com.java.no16.protos.NewsException;
+import com.java.no16.protos.ImageUrlJsonParser;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
@@ -27,6 +28,10 @@ public class GetNewsDetailService {
         @GET("action/query/detail")
         @ConverterType("NewsDetail")
         Call<NewsDetail> getNewsDetail(@Query("newsId") String newsId);
+
+        @GET("https://image.baidu.com/search/avatarjson")
+        @ConverterType("String")
+        Call<ImageUrlJsonParser> getMissedImage(@Query("tn") String tn, @Query("ie") String ie, @Query("word") String keyword, @Query("pn") int pn, @Query("rn") int rn);
     }
 
     private static String SERVICE_NAME = "GetNewsDetailService";
@@ -70,6 +75,14 @@ public class GetNewsDetailService {
         }
         newsDetail.setFavorite(CacheService.getFavorite(newsId));
         newsDetail.separateImageUrlString();
+        if (newsDetail.getImageUrlsCount() == 0) {
+            try {
+                newsDetail.addImageUrl(
+                        newsdetailHttpService.getMissedImage("resultjsonavatarnew", "utf-8", newsDetail.getTitle(), 0, 1).execute().body().getUrl());
+            } catch (IOException e) {
+                Log.e(NewsException.GET_IMAGE_ERROR, String.format(NewsException.GET_IMAGE_MESSAGE, newsDetail.getTitle()));
+            }
+        }
         return newsDetail;
     }
 

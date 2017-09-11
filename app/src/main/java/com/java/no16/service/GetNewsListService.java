@@ -4,8 +4,11 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.google.gson.Gson;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 import com.google.gson.reflect.TypeToken;
 import com.java.no16.protos.Category;
+import com.java.no16.protos.ImageUrlJsonParser;
 import com.java.no16.protos.NewsException;
 import com.java.no16.protos.SimpleNews;
 import com.java.no16.protos.SimpleNewsList;
@@ -36,6 +39,10 @@ public class GetNewsListService {
         @GET("action/query/latest")
         @ConverterType("SimpleNewsList")
         Call<SimpleNewsList> getNewsListByCategory(@Query("pageNo") int pageNo, @Query("pageSize") int pageSize, @Query("category") int category);
+
+        @GET("https://image.baidu.com/search/avatarjson")
+        @ConverterType("String")
+        Call<ImageUrlJsonParser> getMissedImage(@Query("tn") String tn, @Query("ie") String ie, @Query("word") String keyword, @Query("pn") int pn, @Query("rn") int rn);
     }
 
     private static String SERVICE_NAME = "GetNewsListService";
@@ -86,8 +93,18 @@ public class GetNewsListService {
                 return null;
             }
         }
+        //TODO(wenj): Some image query provides non-exist url.
+        //TODO(wenj): Some query takes long time.
         for (SimpleNews simpleNews : newsList) {
             simpleNews.separateImageUrl();
+            if (simpleNews.getImageUrl() == null) {
+                try {
+                    simpleNews.setImageUrl(
+                            newsListHttpService.getMissedImage("resultjsonavatarnew", "utf-8", simpleNews.getTitle(), 0, 1).execute().body().getUrl());
+                } catch (IOException e) {
+                    Log.e(NewsException.GET_IMAGE_ERROR, String.format(NewsException.GET_IMAGE_MESSAGE, simpleNews.getTitle()));
+                }
+            }
         }
         return newsList;
     }

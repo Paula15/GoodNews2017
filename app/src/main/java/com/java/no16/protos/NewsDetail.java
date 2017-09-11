@@ -3,6 +3,7 @@ package com.java.no16.protos;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -93,13 +94,26 @@ public class NewsDetail {
         return imageUrls;
     }
 
+    public int getImageUrlsCount() {
+        if (imageUrls == null) return 0;
+        return imageUrls.size();
+    }
+
     public void setImages(List<String> imageUrls) {
         this.imageUrls = imageUrls;
+    }
+
+    public void addImageUrl(String imageUrl) {
+        if (imageUrls == null) imageUrls = new ArrayList<>();
+        imageUrls.add(imageUrl);
     }
 
     /** Separates imageUrlString into a list of image url. */
     public void separateImageUrlString() {
         imageUrls = Arrays.asList(imageUrlString.trim().split(";|\\s+"));
+        if (imageUrls.size() == 1 && (imageUrls.get(0) == null || imageUrls.get(0).isEmpty())) {
+            imageUrls = new ArrayList<>();
+        }
     }
 
     public String getNewsId() {
