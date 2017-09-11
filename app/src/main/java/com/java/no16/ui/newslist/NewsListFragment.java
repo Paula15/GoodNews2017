@@ -1,8 +1,10 @@
 package com.java.no16.ui.newslist;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -11,7 +13,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
 
 import com.google.android.agera.Receiver;
 import com.google.android.agera.Repositories;
@@ -19,11 +20,13 @@ import com.google.android.agera.Repository;
 import com.google.android.agera.Result;
 import com.google.android.agera.Updatable;
 import com.java.no16.R;
+import com.java.no16.protos.NewsDetail;
 import com.java.no16.protos.SimpleNews;
+import com.java.no16.service.GetNewsDetailService;
 import com.java.no16.supplier.NewsListSupplier;
+import com.java.no16.ui.newsdetail.NewsDetailActivity;
 import com.java.no16.ui.widget.DividerOffsetDecoration;
 import com.java.no16.ui.widget.RecyclerItemClickListener;
-import com.java.no16.ui.widget.RefreshLayout;
 import com.java.no16.util.ThreadPool;
 import com.jwenfeng.library.pulltorefresh.PullToRefreshLayout;
 import com.jwenfeng.library.pulltorefresh.BaseRefreshListener;
@@ -37,18 +40,19 @@ import java.util.List;
 
 public class NewsListFragment extends Fragment implements Updatable {
 
-    Repository<Result<List<SimpleNews>>> repository;
-    NewsListObservable observable;
-    Receiver<List<SimpleNews>> receiver;
-    Receiver<Throwable> throwableReceiver;
+    Repository<Result<List<SimpleNews>>> mRepository;
+    NewsListObservable mObservable;
+    Receiver<List<SimpleNews>> mReceiver;
+    Receiver<Throwable> mThrowableReceiver;
 
     private RecyclerView mRecyclerView;
     private LinearLayoutManager mLayoutManager;
     private List<SimpleNews> mNewsList;
     private NewsListAdapter mAdapter;
-    PullToRefreshLayout mRefreshLayout;
+    private PullToRefreshLayout mRefreshLayout;
 
-    private int page = 0;
+    private boolean mIsLoading = true;
+    private int mPastNewsNum, mCurrentNewsNum, mTotalNewsNum;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -66,18 +70,18 @@ public class NewsListFragment extends Fragment implements Updatable {
     @Override
     public void onResume() {
         super.onResume();
-        repository.addUpdatable(this);
+        mRepository.addUpdatable(this);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        repository.removeUpdatable(this);
+        mRepository.removeUpdatable(this);
     }
 
     @Override
     public void update() {
-        repository.get().ifFailedSendTo(throwableReceiver).ifSucceededSendTo(receiver);
+        mRepository.get().ifFailedSendTo(mThrowableReceiver).ifSucceededSendTo(mReceiver);
     }
 
     private void initRefreshLayout(View view) {
@@ -86,11 +90,13 @@ public class NewsListFragment extends Fragment implements Updatable {
             @Override
             public void refresh() {
                 getLatestData();
+                Log.e("refresh", "REFRESH!!!!!!!!!!!!!!!!!!!!!!!!!");
             }
 
             @Override
             public void loadMore() {
                 getLatestData();
+                Log.e("loadMore", "LOAD!!!!!!!!!!!!!!!!!!!!!!!!!!!");
             }
         });
     }
@@ -106,32 +112,28 @@ public class NewsListFragment extends Fragment implements Updatable {
 
     private void initRepository(View view) {
         NewsListSupplier supplier = new NewsListSupplier();
-        observable = new NewsListObservable(supplier);
-        repository = Repositories.repositoryWithInitialValue(Result.<List<SimpleNews>>absent())
-                .observe(observable)
+        mObservable = new NewsListObservable(supplier);
+        mRepository = Repositories.repositoryWithInitialValue(Result.<List<SimpleNews>>absent())
+                .observe(mObservable)
                 .onUpdatesPerLoop()
                 .goTo(ThreadPool.executor)
                 .thenGetFrom(supplier)
                 .compile();
 
-        receiver = new Receiver<List<SimpleNews>>() {
+        mReceiver = new Receiver<List<SimpleNews>>() {
 
             @Override
             public void accept(@NonNull List<SimpleNews> value) {
-                if(page > 1){
-                    mAdapter.addData(value);
-                } else{
-                    mAdapter.updateData(value);
-                }
+                mAdapter.addData(value);
                 mRefreshLayout.finishRefresh();
                 mRefreshLayout.finishLoadMore();
             }
         };
 
-        throwableReceiver = new Receiver<Throwable>() {
+        mThrowableReceiver = new Receiver<Throwable>() {
             @Override
             public void accept(@NonNull Throwable value) {
-                Log.e("throwableReceiver", "getNewsFailed!");
+                Log.e("mThrowableReceiver", "getNewsFailed!");
             }
         };
     }
@@ -142,28 +144,26 @@ public class NewsListFragment extends Fragment implements Updatable {
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getActivity(), new RecyclerItemClickListener.OnItemClickListener() {
             @Override
-            public void onItemClick(View v, int position) {
+            public void onItemClick(View view, int position) {
                 // TODO(zpzhou)
+                String newsId = mAdapter.getItem(position).getNewsId();
+                Intent intent = new Intent(getActivity(), NewsDetailActivity.class);
+                ActivityOptionsCompat options =
+                        ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(),
+                                view.findViewById(R.id.news_image), getString(R.string.transition_news_img));
+                intent.putExtra(NewsDetailActivity.NEWS, newsId);
+                ActivityCompat.startActivity(getActivity(), intent, options.toBundle());
             }
         }));
     }
 
-    private RecyclerItemClickListener.OnItemClickListener onItemClickListener = new RecyclerItemClickListener.OnItemClickListener() {
-        @Override
-        public void onItemClick(View view, int position) {
-            // TODO(zpzhou)
-        }
-    };
-
     private void getLatestData() {
         // TODO(zpzhou)
-        observable.refreshNews();
-        page = 0;
+        mObservable.refreshNews();
     }
 
     private void getHistoryData() {
         // TODO(zpzhou)
-        observable.refreshNews();
-        page += 1;
+        mObservable.refreshNews();
     }
 }
