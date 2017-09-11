@@ -4,12 +4,10 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.google.gson.Gson;
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
 import com.google.gson.reflect.TypeToken;
 import com.java.no16.protos.Category;
 import com.java.no16.protos.ImageUrlJsonParser;
-import com.java.no16.protos.NewsException;
+import com.java.no16.protos.NewsLoggerUtil;
 import com.java.no16.protos.SimpleNews;
 import com.java.no16.protos.SimpleNewsList;
 
@@ -82,14 +80,14 @@ public class GetNewsListService {
             try {
                 newsList = newsListHttpService.getNewsList(pageNo, pageSize).execute().body().getSimpleNewsList();
             } catch (IOException e) {
-                Log.e(NewsException.CONVERT_FROM_STRING_TO_JSON_ERROR, String.format(NewsException.CONVERT_FROM_STRING_TO_JSON_MESSAGE, "getNewsList", SERVICE_NAME));
+                Log.e(NewsLoggerUtil.CONVERT_FROM_STRING_TO_JSON_ERROR, String.format(NewsLoggerUtil.CONVERT_FROM_STRING_TO_JSON_MESSAGE, "getNewsList", SERVICE_NAME));
                 return null;
             }
         } else {
             try {
                 newsList = newsListHttpService.getNewsListByCategory(pageNo, pageSize, category.ordinal()).execute().body().getSimpleNewsList();
             } catch (IOException e) {
-                Log.e(NewsException.CONVERT_FROM_STRING_TO_JSON_ERROR, String.format(NewsException.CONVERT_FROM_STRING_TO_JSON_MESSAGE, "getNewsList", SERVICE_NAME));
+                Log.e(NewsLoggerUtil.CONVERT_FROM_STRING_TO_JSON_ERROR, String.format(NewsLoggerUtil.CONVERT_FROM_STRING_TO_JSON_MESSAGE, "getNewsList", SERVICE_NAME));
                 return null;
             }
         }
@@ -127,7 +125,7 @@ public class GetNewsListService {
         try {
             return newsListHttpService.getMissedImage("resultjsonavatarnew", "utf-8", title, 0, 1).execute().body().getUrl();
         } catch (IOException e) {
-            Log.e(NewsException.GET_IMAGE_ERROR, String.format(NewsException.GET_IMAGE_MESSAGE, title));
+            Log.e(NewsLoggerUtil.GET_IMAGE_ERROR, String.format(NewsLoggerUtil.GET_IMAGE_MESSAGE, title));
             return "";
         }
     }
