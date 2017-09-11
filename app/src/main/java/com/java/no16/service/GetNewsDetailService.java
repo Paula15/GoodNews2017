@@ -76,6 +76,7 @@ public class GetNewsDetailService {
         newsDetail.setFavorite(CacheService.getFavorite(newsId));
         newsDetail.setShowImage(CacheService.isShowImage());
         newsDetail.separateImageUrlString();
+        newsDetail.setContent(newsDetail.getContent().replaceAll("\\s\\s+", "\n"));
         return newsDetail;
     }
 
