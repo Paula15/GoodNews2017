@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import com.google.android.agera.Result;
 import com.java.no16.protos.Category;
 
 import java.util.ArrayList;
@@ -29,6 +30,7 @@ public class CacheService {
     private static boolean night;
     private static boolean showPicture;
     private static List<String> keywords;
+    private static CacheService cacheService;
 
     /**
      * Initiates CacheService.
@@ -107,5 +109,12 @@ public class CacheService {
             stringBuilder.append(keyword);
         }
         return stringBuilder.toString();
+    }
+
+    public static Result<CacheService> get() {
+        if (cacheService == null) {
+            cacheService = new CacheService();
+        }
+        return Result.success(cacheService);
     }
 }
