@@ -132,9 +132,9 @@ public class CacheService {
      */
     private static void initCategoryList() {
         List<Category> mock = getAllCategoryList();
-        mock.remove(Category.CAR);
-        mock.remove(Category.DOMESTICATION);
-        mock.remove(Category.ECONIMICS);
+//        mock.remove(Category.CAR);
+//        mock.remove(Category.DOMESTICATION);
+//        mock.remove(Category.ECONIMICS);
         setCategoryList(mock);
     }
 }

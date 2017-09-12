@@ -20,6 +20,7 @@ import com.google.android.agera.Repository;
 import com.google.android.agera.Result;
 import com.google.android.agera.Updatable;
 import com.java.no16.R;
+import com.java.no16.protos.Category;
 import com.java.no16.protos.SimpleNews;
 import com.java.no16.supplier.NewsListSupplier;
 import com.java.no16.ui.newsdetail.NewsDetailActivity;
@@ -53,6 +54,11 @@ public class NewsListFragment extends Fragment implements Updatable {
     enum Status { REFRESHING, LOADING, NORMAL }
 
     private Status mStatus = Status.REFRESHING;
+
+    public static NewsListFragment newInstance(Category category) {
+        // TODO(zpzhou): Query server for news specified by category.
+        return new NewsListFragment();
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
