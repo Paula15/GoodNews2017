@@ -17,7 +17,8 @@ import java.util.List;
  */
 
 public class NewsListSupplier implements Supplier<Result<List<SimpleNews>>> {
-    int pageNo = 1, pageSize;
+    int pageNo = 1, pageSize = 20;
+    Category category = Category.ALL;
 
     @NonNull
     @Override
@@ -31,7 +32,7 @@ public class NewsListSupplier implements Supplier<Result<List<SimpleNews>>> {
     }
 
     private List<SimpleNews> getNewsList() {
-        return GetNewsListService.getNewsList(pageNo, pageSize, Category.ALL);
+        return GetNewsListService.getNewsList(pageNo, pageSize, category);
     }
 
     public void setPageNo(int pageNo) {
@@ -48,5 +49,13 @@ public class NewsListSupplier implements Supplier<Result<List<SimpleNews>>> {
 
     public int getPageSize() {
         return pageSize;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+
+    public Category getCategory() {
+        return category;
     }
 }

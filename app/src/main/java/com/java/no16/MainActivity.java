@@ -5,12 +5,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 
-import com.java.no16.protos.NewsException;
+import com.java.no16.protos.NewsLoggerUtil;
 import com.java.no16.service.CacheService;
 import com.java.no16.service.GetNewsDetailService;
 import com.java.no16.service.GetNewsListService;
 import com.java.no16.service.GetSearchResultService;
 import com.java.no16.ui.newslist.NewsListFragment;
+import com.java.no16.ui.tablist.TabListFragment;
+
+import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -28,8 +31,20 @@ public class MainActivity extends AppCompatActivity {
         GetSearchResultService.initService();
         CacheService.initService(this);
 
+        /*Log.e("KEYWORDLIST:", CacheService.getKeywordList().toString());
+        Log.e("SHOW_IMAGE:", CacheService.isShowPicture() + "");
+        Log.e("NIGHT:", CacheService.isNight() + "");
+        CacheService.setKeywordList(Arrays.asList("aaa"));
+        CacheService.setShowImage(false);
+        Log.e("KEYWORDLIST:", CacheService.getKeywordList().toString());
+        Log.e("SHOW_IMAGE:", CacheService.isShowPicture() + "");
+        Log.e("NIGHT:", CacheService.isNight() + "");
+
+        CacheService.addKeywords("aaa;bbb;ccc");*/
+
         gotoNewsList();
 //        startActivity(new Intent(this, SettingActivity.class));
+        gotoTabList();
     }
 
     @Override
@@ -49,5 +64,10 @@ public class MainActivity extends AppCompatActivity {
     private void gotoNewsList() {
         getSupportFragmentManager().beginTransaction().replace(R.id.frame_content, new NewsListFragment()).commit();
         mToolbar.setTitle(R.string.title_news);
+    }
+
+    private void gotoTabList() {
+        getSupportFragmentManager().beginTransaction().replace(R.id.frame_content, new TabListFragment()).commit();
+        mToolbar.setTitle(R.string.title_category);
     }
 }

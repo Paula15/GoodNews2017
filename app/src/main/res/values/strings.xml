@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">GoodNews2017</string>
     <string name="title_news">新闻</string>
+    <string name="title_category">分类</string>
 
     <string name="title_activity_main">Android ObservableScrollView</string>
     <string name="title_activity_about">About this app</string>
