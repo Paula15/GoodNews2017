@@ -32,6 +32,7 @@ public class NewsDetailActivity extends BaseActivity implements Updatable {
     View titleTextView;
     TextView contentTextView;
     NewsDetailSupplier newsDetailSupplier;
+    ImageView nextImage;
     public static final String NEWS = "news_key";
 
     private String newsDetail;
@@ -49,6 +50,7 @@ public class NewsDetailActivity extends BaseActivity implements Updatable {
         imageView = (ImageView) findViewById(R.id.ivImage);
         titleTextView = (View) findViewById(R.id.titleText);
         contentTextView = (TextView) findViewById(R.id.contentText);
+        nextImage = (ImageView) findViewById(R.id.nextImage);
         newsDetailSupplier = new NewsDetailSupplier();
         newsDetail = getIntent().getStringExtra(NEWS);
         newsDetailSupplier.setKey(newsDetail);
@@ -91,11 +93,18 @@ public class NewsDetailActivity extends BaseActivity implements Updatable {
                 public void accept(@NonNull final NewsDetail value) {
                     newsDetail = value.getNewsId();
                     toolbar.setTitle("ToolBar");
-                    for (String image: value.getImageUrls()) {
+                    if (value.getImageUrlsCount() == 0) {
+                    } else {
                         Glide.with(NewsDetailActivity.this)
-                                .load(image)
+                                .load(value.getImageUrls().get(0))
                                 .asBitmap()
-                                .into(imageView);
+                                .into(nextImage);
+                        if (value.getImageUrlsCount() > 1) {
+                            Glide.with(NewsDetailActivity.this)
+                                    .load(value.getImageUrls().get(1))
+                                    .asBitmap()
+                                    .into(imageView);
+                        }
                     }
                     contentTextView.setText(value.getTitle() + '\n' + value.getContent());
                 }

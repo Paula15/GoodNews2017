@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
-import com.google.android.agera.Result;
 import com.java.no16.protos.Category;
 
 import java.util.ArrayList;
@@ -95,6 +94,10 @@ public class CacheService {
         CacheService.showPicture = showPicture;
     }
 
+    public static void addKeyword(String keyword) {
+        keywords.add(keyword);
+    }
+
     public static List<String> getKeywordList() {
         return keywords;
     }
@@ -111,10 +114,10 @@ public class CacheService {
         return stringBuilder.toString();
     }
 
-    public static Result<CacheService> get() {
+    public static CacheService get() {
         if (cacheService == null) {
             cacheService = new CacheService();
         }
-        return Result.success(cacheService);
+        return cacheService;
     }
 }
