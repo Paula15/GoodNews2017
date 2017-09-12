@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
         GetSearchResultService.initService();
         CacheService.initService(this);
 
-        Log.e("KEYWORDLIST:", CacheService.getKeywordList().toString());
+        /*Log.e("KEYWORDLIST:", CacheService.getKeywordList().toString());
         Log.e("SHOW_IMAGE:", CacheService.isShowPicture() + "");
         Log.e("NIGHT:", CacheService.isNight() + "");
         CacheService.setKeywordList(Arrays.asList("aaa"));
@@ -38,6 +38,8 @@ public class MainActivity extends AppCompatActivity {
         Log.e("KEYWORDLIST:", CacheService.getKeywordList().toString());
         Log.e("SHOW_IMAGE:", CacheService.isShowPicture() + "");
         Log.e("NIGHT:", CacheService.isNight() + "");
+
+        CacheService.addKeywords("aaa;bbb;ccc");*/
 
         gotoNewsList();
 //        startActivity(new Intent(this, SettingActivity.class));

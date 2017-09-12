@@ -3,6 +3,7 @@ package com.java.no16.service;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 import com.java.no16.protos.Category;
 
@@ -40,8 +41,10 @@ public class CacheService {
         night = prefs.getBoolean(NIGHT, false);
         showPicture = prefs.getBoolean(SHOW_PICTURE, true);
         String keywordsString = prefs.getString(KEYWORDS, "");
-        if (keywordsString.trim().isEmpty()) keywords = new ArrayList<>();
-        else keywords = Arrays.asList(keywordsString.trim().split(";"));
+        keywords = new ArrayList<>();
+        if (!keywordsString.trim().isEmpty()) {
+            keywords = new ArrayList<String>(Arrays.asList(keywordsString.trim().split(";")));
+        }
     }
 
     /**
@@ -94,8 +97,9 @@ public class CacheService {
         CacheService.showPicture = showPicture;
     }
 
-    public static void addKeyword(String keyword) {
-        keywords.add(keyword);
+    public static void addKeywords(String keyword) {
+        if (keyword == null || keyword.trim().isEmpty()) return;
+        keywords.addAll(new ArrayList<String>(Arrays.asList(keyword.split(";"))));
     }
 
     public static List<String> getKeywordList() {
@@ -103,7 +107,14 @@ public class CacheService {
     }
 
     public static void setKeywordList(List<String> keywords) {
-        CacheService.keywords = keywords;
+        CacheService.keywords = new ArrayList<>(keywords);
+    }
+
+    public static CacheService get() {
+        if (cacheService == null) {
+            cacheService = new CacheService();
+        }
+        return cacheService;
     }
 
     private static String getKeywordListString() {
@@ -112,12 +123,5 @@ public class CacheService {
             stringBuilder.append(keyword);
         }
         return stringBuilder.toString();
-    }
-
-    public static CacheService get() {
-        if (cacheService == null) {
-            cacheService = new CacheService();
-        }
-        return cacheService;
     }
 }
