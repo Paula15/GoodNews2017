@@ -5,11 +5,17 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import com.java.no16.database.DBManager;
 import com.java.no16.protos.Category;
+import com.java.no16.protos.NewsDetail;
+import com.java.no16.protos.NewsException;
+import com.java.no16.protos.SimpleNews;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Service which reads data from file to cache at the start of app, stores cache data, provides cache data
@@ -20,6 +26,7 @@ public class CacheService {
     public static final String NIGHT = "night";
     public static final String SHOW_PICTURE = "showPicture";
     public static final String KEYWORDS = "keywords";
+    public static final String CATEGORIES = "categories";
 
     /** List of all categories. */
     private static final List<Category> allCategoryList = Arrays.asList(Category.values());
@@ -27,10 +34,14 @@ public class CacheService {
     /** List of categories which user needs. */
     private static List<Category> categoryList;
 
+    /** Map storing newsIds and their corresponding favorite status which have been loading in cache. */
+    private static Map<String, Boolean> favoriteStatus;
+
     private static boolean night;
     private static boolean showPicture;
     private static List<String> keywords;
     private static CacheService cacheService;
+    private static DBManager dbManager;
 
     /**
      * Initiates CacheService.
@@ -41,10 +52,17 @@ public class CacheService {
         night = prefs.getBoolean(NIGHT, false);
         showPicture = prefs.getBoolean(SHOW_PICTURE, true);
         String keywordsString = prefs.getString(KEYWORDS, "");
+        String categoryString = prefs.getString(CATEGORIES, "ALL,TECHNOLOGY,EDUCATION,MILITARY");
         keywords = new ArrayList<>();
         if (!keywordsString.trim().isEmpty()) {
-            keywords = new ArrayList<String>(Arrays.asList(keywordsString.trim().split(";")));
+            keywords = new ArrayList<>(Arrays.asList(keywordsString.trim().split(",")));
         }
+        categoryList = new ArrayList<>();
+        for (String str : Arrays.asList(categoryString.trim().split(","))) {
+            if (!str.isEmpty()) categoryList.add(Category.valueOf(str.trim()));
+        }
+        favoriteStatus = new HashMap<>();
+        dbManager = new DBManager(activity);
     }
 
     /**
@@ -56,6 +74,8 @@ public class CacheService {
         prefs.edit().putBoolean(NIGHT, night).apply();
         prefs.edit().putBoolean(SHOW_PICTURE, showPicture).apply();
         prefs.edit().putString(KEYWORDS, getKeywordListString()).apply();
+        prefs.edit().putString(CATEGORIES, getCategoryListString()).apply();
+        dbManager.closeDB(favoriteStatus);
     }
 
     /** Gets all categories. */
@@ -69,16 +89,21 @@ public class CacheService {
     }
 
     public static void setCategoryList(List<Category> categoryList) {
-        CacheService.categoryList = categoryList;
+        CacheService.categoryList = new ArrayList<>(categoryList);
     }
 
     public static boolean getFavorite(String newsId) {
-        //TODO(bellasong)
-        return false;
+        Log.e("CacheService", newsId);
+        if (favoriteStatus.containsKey(newsId)) {
+            return favoriteStatus.get(newsId);
+        }
+        Log.e("CacheService", newsId);
+        return dbManager.queryFavorite(newsId);
+        //return false;
     }
 
     public static void setFavorite(String newsId, boolean favorite) {
-        //TODO(bellasong)
+        favoriteStatus.put(newsId, favorite);
     }
 
     public static boolean isNight() {
@@ -117,11 +142,25 @@ public class CacheService {
         return cacheService;
     }
 
+    public static void storeNewsDetail(NewsDetail newsDetail) {
+        dbManager.add(newsDetail);
+    }
+
+    public static List<SimpleNews> getOfflineNewsList(int pageNo, int pageSize, Category category) throws NewsException {
+        return dbManager.queryNewsList(pageNo, pageSize, category);
+    }
+
+    public static NewsDetail getOfflineNewsDetail(String newsId) throws NewsException {
+        return dbManager.queryNewsDetail(newsId);
+    }
+
     private static String getKeywordListString() {
-        StringBuilder stringBuilder = new StringBuilder();
-        for (String keyword : keywords) {
-            stringBuilder.append(keyword);
-        }
-        return stringBuilder.toString();
+        String listString = keywords.toString();
+        return listString.substring(1, listString.length() - 1);
+    }
+
+    private static String getCategoryListString() {
+        String listString = categoryList.toString();
+        return listString.substring(1, listString.length() - 1);
     }
 }

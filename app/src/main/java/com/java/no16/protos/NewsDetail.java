@@ -38,6 +38,10 @@ public class NewsDetail {
     @Expose
     private String newsId;
 
+    @SerializedName("newsClassTag")
+    @Expose
+    private String categoryString;
+
     private boolean favorite;
 
     public NewsDetail(String title, String author, String date, String content, boolean favorite, List<String> imageUrls, String newsId) {
@@ -49,6 +53,16 @@ public class NewsDetail {
         this.imageUrls = imageUrls;
         this.newsId = newsId;
     }
+
+   public NewsDetail(String newsId, String title, String author, String date, String content, boolean favorite) {
+       this.title = title;
+       this.author = author;
+       this.date = date;
+       this.content = content;
+       this.favorite = favorite;
+       this.imageUrls = new ArrayList<>();
+       this.newsId = newsId;
+   }
 
     public String getTitle() {
         return title;
@@ -122,5 +136,9 @@ public class NewsDetail {
 
     public void setNewsId(String newsId) {
         this.newsId = newsId;
+    }
+
+    public String getCategoryString() {
+        return categoryString;
     }
 }

@@ -7,7 +7,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.java.no16.protos.Category;
 import com.java.no16.protos.ImageUrlJsonParser;
-import com.java.no16.protos.NewsLoggerUtil;
+import com.java.no16.protos.NewsException;
 import com.java.no16.protos.SimpleNews;
 import com.java.no16.protos.SimpleNewsList;
 
@@ -74,21 +74,19 @@ public class GetNewsListService {
     }
 
     /** Gets news list according to providing pageNo, pageSize, category. */
-    public static @Nullable List<SimpleNews> getNewsList(int pageNo, int pageSize, Category category) {
+    public static @Nullable List<SimpleNews> getNewsList(int pageNo, int pageSize, Category category) throws NewsException {
         List<SimpleNews> newsList;
         if (category == Category.ALL) {
             try {
                 newsList = newsListHttpService.getNewsList(pageNo, pageSize).execute().body().getSimpleNewsList();
             } catch (IOException e) {
-                Log.e(NewsLoggerUtil.CONVERT_FROM_STRING_TO_JSON_ERROR, String.format(NewsLoggerUtil.CONVERT_FROM_STRING_TO_JSON_MESSAGE, "getNewsList", SERVICE_NAME));
-                return null;
+                throw new NewsException(NewsException.NEWS_ERROR, String.format(NewsException.CONVERT_FROM_STRING_TO_JSON_MESSAGE, "getNewsList", SERVICE_NAME));
             }
         } else {
             try {
                 newsList = newsListHttpService.getNewsListByCategory(pageNo, pageSize, category.ordinal()).execute().body().getSimpleNewsList();
             } catch (IOException e) {
-                Log.e(NewsLoggerUtil.CONVERT_FROM_STRING_TO_JSON_ERROR, String.format(NewsLoggerUtil.CONVERT_FROM_STRING_TO_JSON_MESSAGE, "getNewsList", SERVICE_NAME));
-                return null;
+                throw new NewsException(NewsException.NEWS_ERROR, String.format(NewsException.CONVERT_FROM_STRING_TO_JSON_MESSAGE, "getNewsList", SERVICE_NAME));
             }
         }
 
@@ -98,9 +96,13 @@ public class GetNewsListService {
         return newsList;
     }
 
+    public static @Nullable List<SimpleNews> getOfflineNewsList(int pageNo, int pageSize, Category category) throws NewsException {
+        return CacheService.getOfflineNewsList(pageNo, pageSize, category);
+    }
+
     /** Gets categories in user's setting. */
     public static List<Category> getCategoryList() {
-        return CacheService.getCategoryList();
+        return new ArrayList<>(CacheService.getCategoryList());
     }
 
     /** Gets categories not in user's setting. */
@@ -125,7 +127,7 @@ public class GetNewsListService {
         try {
             return newsListHttpService.getMissedImage("resultjsonavatarnew", "utf-8", title, 0, 1).execute().body().getUrl();
         } catch (IOException e) {
-            Log.e(NewsLoggerUtil.GET_IMAGE_ERROR, String.format(NewsLoggerUtil.GET_IMAGE_MESSAGE, title));
+            Log.e(NewsException.GET_IMAGE_ERROR, String.format(NewsException.GET_IMAGE_MESSAGE, title));
             return "";
         }
     }

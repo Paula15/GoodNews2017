@@ -7,7 +7,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.java.no16.protos.Category;
 import com.java.no16.protos.ImageUrlJsonParser;
-import com.java.no16.protos.NewsLoggerUtil;
+import com.java.no16.protos.NewsException;
 import com.java.no16.protos.SimpleNews;
 import com.java.no16.protos.SimpleNewsList;
 
@@ -79,14 +79,14 @@ public class GetSearchResultService {
             try {
                 searchResult = searchResultHttpService.getSearchResult(keyword, pageNo, pageSize).execute().body().getSimpleNewsList();
             } catch (IOException e) {
-                Log.e(NewsLoggerUtil.CONVERT_FROM_STRING_TO_JSON_ERROR, String.format(NewsLoggerUtil.CONVERT_FROM_STRING_TO_JSON_MESSAGE, "getSearchResult", SERVICE_NAME));
+                Log.e(NewsException.CONVERT_FROM_STRING_TO_JSON_ERROR, String.format(NewsException.CONVERT_FROM_STRING_TO_JSON_MESSAGE, "getSearchResult", SERVICE_NAME));
                 return null;
             }
         } else {
             try {
                 searchResult = searchResultHttpService.getSearchResultByCategory(keyword, pageNo, pageSize, category.ordinal()).execute().body().getSimpleNewsList();
             } catch (IOException e) {
-                Log.e(NewsLoggerUtil.CONVERT_FROM_STRING_TO_JSON_ERROR, String.format(NewsLoggerUtil.CONVERT_FROM_STRING_TO_JSON_MESSAGE, "getSearchResult", SERVICE_NAME));
+                Log.e(NewsException.CONVERT_FROM_STRING_TO_JSON_ERROR, String.format(NewsException.CONVERT_FROM_STRING_TO_JSON_MESSAGE, "getSearchResult", SERVICE_NAME));
                 return null;
             }
         }
@@ -123,7 +123,7 @@ public class GetSearchResultService {
         try {
             return searchResultHttpService.getMissedImage("resultjsonavatarnew", "utf-8", title, 0, 1).execute().body().getUrl();
         } catch (IOException e) {
-            Log.e(NewsLoggerUtil.GET_IMAGE_ERROR, String.format(NewsLoggerUtil.GET_IMAGE_MESSAGE, title));
+            Log.e(NewsException.GET_IMAGE_ERROR, String.format(NewsException.GET_IMAGE_MESSAGE, title));
             return "";
         }
     }

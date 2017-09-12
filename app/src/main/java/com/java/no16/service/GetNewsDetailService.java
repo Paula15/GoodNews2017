@@ -5,7 +5,7 @@ import android.util.Log;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.java.no16.protos.NewsDetail;
-import com.java.no16.protos.NewsLoggerUtil;
+import com.java.no16.protos.NewsException;
 import com.java.no16.protos.ImageUrlJsonParser;
 
 import java.io.IOException;
@@ -24,6 +24,7 @@ import retrofit2.http.Query;
  */
 
 public class GetNewsDetailService {
+
     interface NewsDetailHttpService {
         @GET("action/query/detail")
         @ConverterType("NewsDetail")
@@ -65,18 +66,21 @@ public class GetNewsDetailService {
     }
 
     /** Gets news detail with newsId. */
-    public static NewsDetail getNewsDetail(String newsId) {
+    public static NewsDetail getNewsDetail(String newsId) throws NewsException {
         NewsDetail newsDetail;
         try {
             newsDetail = newsdetailHttpService.getNewsDetail(newsId).execute().body();
         } catch (IOException e) {
-            Log.e(NewsLoggerUtil.CONVERT_FROM_STRING_TO_JSON_ERROR, String.format(NewsLoggerUtil.CONVERT_FROM_STRING_TO_JSON_MESSAGE, "getNewsDetail", SERVICE_NAME));
-            return null;
+            throw  new NewsException(NewsException.NEWS_ERROR, String.format(NewsException.CONVERT_FROM_STRING_TO_JSON_MESSAGE, "getNewsDetail", SERVICE_NAME));
         }
         newsDetail.setFavorite(CacheService.getFavorite(newsId));
         newsDetail.separateImageUrlString();
-        newsDetail.setContent(newsDetail.getContent().replaceAll("\\s\\s+", "\n\n"));
+        CacheService.storeNewsDetail(newsDetail);
         return newsDetail;
+    }
+
+    public static NewsDetail getOfflineNewsDetail(String newsId) throws NewsException {
+        return CacheService.getOfflineNewsDetail(newsId);
     }
 
     /** Gets missing image with specified title. */
@@ -84,7 +88,7 @@ public class GetNewsDetailService {
         try {
             return newsdetailHttpService.getMissedImage("resultjsonavatarnew", "utf-8", title, 0, 1).execute().body().getUrl();
         } catch (IOException e) {
-            Log.e(NewsLoggerUtil.GET_IMAGE_ERROR, String.format(NewsLoggerUtil.GET_IMAGE_MESSAGE, title));
+            Log.e(NewsException.GET_IMAGE_ERROR, String.format(NewsException.GET_IMAGE_MESSAGE, title));
             return "";
         }
     }
