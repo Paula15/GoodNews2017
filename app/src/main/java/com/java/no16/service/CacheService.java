@@ -40,8 +40,10 @@ public class CacheService {
         night = prefs.getBoolean(NIGHT, false);
         showPicture = prefs.getBoolean(SHOW_PICTURE, true);
         String keywordsString = prefs.getString(KEYWORDS, "");
-        if (keywordsString.trim().isEmpty()) keywords = new ArrayList<>();
-        else keywords = Arrays.asList(keywordsString.trim().split(";"));
+        keywords = new ArrayList<>();
+        if (!keywordsString.trim().isEmpty()) {
+            keywords.addAll(Arrays.asList(keywordsString.trim().split(";")));
+        }
     }
 
     /**
@@ -94,8 +96,9 @@ public class CacheService {
         CacheService.showPicture = showPicture;
     }
 
-    public static void addKeyword(String keyword) {
-        keywords.add(keyword);
+    public static void addKeywords(String keyword) {
+        if (keyword == null || keyword.trim().isEmpty()) return;
+        keywords.addAll(Arrays.asList(keyword.split(";")));
     }
 
     public static List<String> getKeywordList() {
@@ -106,18 +109,18 @@ public class CacheService {
         CacheService.keywords = keywords;
     }
 
+    public static CacheService get() {
+        if (cacheService == null) {
+            cacheService = new CacheService();
+        }
+        return cacheService;
+    }
+
     private static String getKeywordListString() {
         StringBuilder stringBuilder = new StringBuilder();
         for (String keyword : keywords) {
             stringBuilder.append(keyword);
         }
         return stringBuilder.toString();
-    }
-
-    public static CacheService get() {
-        if (cacheService == null) {
-            cacheService = new CacheService();
-        }
-        return cacheService;
     }
 }

@@ -76,7 +76,7 @@ public class SettingActivity extends BaseActivity {
                     Toast.makeText(SettingActivity.this, "You cannot set an empty String!", Toast.LENGTH_SHORT).show();
                 }
                 else
-                    CacheService.addKeyword(settedWord);
+                    CacheService.addKeywords(settedWord);
             }
         });
     }
