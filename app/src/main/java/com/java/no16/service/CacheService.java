@@ -45,6 +45,7 @@ public class CacheService {
         if (!keywordsString.trim().isEmpty()) {
             keywords = new ArrayList<String>(Arrays.asList(keywordsString.trim().split(";")));
         }
+        initCategoryList();
     }
 
     /**
@@ -123,5 +124,17 @@ public class CacheService {
             stringBuilder.append(keyword);
         }
         return stringBuilder.toString();
+    }
+
+    /**
+     * TODO(wenj): This is a mock version to initialize categoryList,
+     * which should be actually loaded from a database instead.
+     */
+    private static void initCategoryList() {
+        List<Category> mock = getAllCategoryList();
+        mock.remove(Category.CAR);
+        mock.remove(Category.DOMESTICATION);
+        mock.remove(Category.ECONIMICS);
+        setCategoryList(mock);
     }
 }
