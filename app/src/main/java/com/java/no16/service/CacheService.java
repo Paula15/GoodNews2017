@@ -95,6 +95,10 @@ public class CacheService {
         CacheService.showPicture = showPicture;
     }
 
+    public static void addKeyword(String keyword) {
+        keywords.add(keyword);
+    }
+
     public static List<String> getKeywordList() {
         return keywords;
     }
