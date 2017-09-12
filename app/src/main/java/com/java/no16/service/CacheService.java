@@ -3,6 +3,7 @@ package com.java.no16.service;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 import com.java.no16.protos.Category;
 
@@ -100,6 +101,11 @@ public class CacheService {
 
     public static void setKeywordList(List<String> keywords) {
         CacheService.keywords = keywords;
+    }
+
+    public static void addKeyword(String keyword) {
+        Log.e("print", keywords.getClass().toString());
+        CacheService.keywords.add(keyword);
     }
 
     private static String getKeywordListString() {

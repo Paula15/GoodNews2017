@@ -13,7 +13,6 @@ import com.java.no16.service.GetSearchResultService;
 import com.java.no16.ui.newslist.NewsListFragment;
 
 import java.util.Arrays;
-import java.util.Collections;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -41,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
         Log.e("NIGHT:", CacheService.isNight() + "");
 
         gotoNewsList();
+//        startActivity(new Intent(this, SettingActivity.class));
     }
 
     @Override

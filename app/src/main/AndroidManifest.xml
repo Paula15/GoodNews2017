@@ -19,6 +19,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.newsdetail.NewsDetailActivity"></activity>
+        <activity android:name=".ui.setting.SettingActivity"></activity>
     </application>
 
 </manifest>
