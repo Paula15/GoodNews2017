@@ -39,6 +39,9 @@ import java.util.List;
 
 public class NewsListFragment extends Fragment implements Updatable {
 
+    static private final String KEY_CATEGORY = "category";
+    private Category mCategory = Category.ALL;
+
     Repository<Result<List<SimpleNews>>> mRepository;
     NewsListObservable mObservable;
     Receiver<List<SimpleNews>> mReceiver;
@@ -52,18 +55,23 @@ public class NewsListFragment extends Fragment implements Updatable {
 
     private final int PAGE_SIZE = 20;
     enum Status { REFRESHING, LOADING, NORMAL }
-
     private Status mStatus = Status.REFRESHING;
 
     public static NewsListFragment newInstance(Category category) {
-        // TODO(zpzhou): Query server for news specified by category.
-        return new NewsListFragment();
+        NewsListFragment fragment = new NewsListFragment();
+
+        Bundle args = new Bundle();
+        args.putSerializable(KEY_CATEGORY, category);
+        fragment.setArguments(args);
+
+        return fragment;
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_newslist, null);
 
+        initCategory();
         initRefreshLayout(view);
         initRecyclerView(view);
         initRepository(view);
@@ -91,14 +99,17 @@ public class NewsListFragment extends Fragment implements Updatable {
     }
 
     private void doRefresh() {
-        // TODO(zpzhou)
-        mObservable.refreshNews(1, PAGE_SIZE);
+        mObservable.refreshNews(1, PAGE_SIZE, mCategory);
     }
 
     private void doLoadMore() {
-        // TODO(zpzhou)
         int pageNo = mNewsList.size() / PAGE_SIZE + 1;
-        mObservable.refreshNews(pageNo, PAGE_SIZE);
+        mObservable.refreshNews(pageNo, PAGE_SIZE, mCategory);
+    }
+
+    private void initCategory() {
+        Bundle args = getArguments();
+        mCategory = (args == null) ? Category.ALL : (Category) args.get(KEY_CATEGORY);
     }
 
     private void initRefreshLayout(View view) {
@@ -106,11 +117,9 @@ public class NewsListFragment extends Fragment implements Updatable {
         mRefreshLayout.setRefreshListener(new BaseRefreshListener() {
             @Override
             public void refresh() {
-                // TODO(zpzhou)
                 if (mStatus == Status.NORMAL) {
                     mStatus = Status.REFRESHING;
                     doRefresh();
-                    Log.e("REFRESHING!!!!!!!!", "size = " + mNewsList.size());
                 }
             }
 
@@ -120,7 +129,6 @@ public class NewsListFragment extends Fragment implements Updatable {
                         mLayoutManager.findLastCompletelyVisibleItemPosition() == mLayoutManager.getItemCount() - 1) {
                     mStatus = Status.LOADING;
                     doLoadMore();
-                    Log.e("LOADING!!!!!!!!!!!", "size = " + mNewsList.size());
                 }
             }
         });
@@ -182,7 +190,6 @@ public class NewsListFragment extends Fragment implements Updatable {
         mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getActivity(), new RecyclerItemClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                // TODO(zpzhou)
                 String newsId = mAdapter.getItem(position).getNewsId();
                 Intent intent = new Intent(getActivity(), NewsDetailActivity.class);
                 ActivityOptionsCompat options =
