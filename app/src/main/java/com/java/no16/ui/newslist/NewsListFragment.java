@@ -110,6 +110,7 @@ public class NewsListFragment extends Fragment implements Updatable {
     }
 
     public void doRefresh() {
+        mStatus = Status.REFRESHING;
         mObservable.refreshNews(mSearchKey, 1, PAGE_SIZE, mCategory);
         Log.e("@" + Thread.currentThread().getName() + " => " + mCategory.getName(), "doRefresh");
     }
@@ -122,7 +123,6 @@ public class NewsListFragment extends Fragment implements Updatable {
     private void doSearch(String searchKey) {
         mSearchKey = searchKey;
         mAdapter.clearItems();
-        mStatus = Status.REFRESHING;
         doRefresh();
         Log.e("@" + Thread.currentThread().getName() + " => " + mCategory.getName(), "doSearch");
     }
@@ -250,4 +250,7 @@ public class NewsListFragment extends Fragment implements Updatable {
         });
     }
 
+    public String getCategory() {
+        return mCategory.getName();
+    }
 }

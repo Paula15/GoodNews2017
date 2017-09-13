@@ -16,6 +16,7 @@ import android.widget.RelativeLayout;
 import com.java.no16.R;
 import com.java.no16.protos.Category;
 import com.java.no16.service.GetNewsListService;
+import com.java.no16.ui.newslist.NewsListFragment;
 import com.java.no16.ui.tablist.tabedit.TabEditActivity;
 
 import java.util.ArrayList;
@@ -64,6 +65,24 @@ public class TabListFragment extends Fragment {
     private void initPager(View view) {
         mPager = (ViewPager) view.findViewById(R.id.view_pager);
         mPager.setAdapter(mAdapter);
+        mPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                NewsListFragment fragment = getFragment(position);
+                fragment.doRefresh();
+                Log.e("onPageSelected", fragment.getCategory() + "@" + position);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
     }
 
     private void initTabLayout(View view) {
@@ -120,5 +139,10 @@ public class TabListFragment extends Fragment {
         mAdapter.updateData(mCategoryList);
         mPager.setAdapter(mAdapter);
         mTabLayout.setViewPager(mPager);
+    }
+
+    public NewsListFragment getFragment(int position) {
+        NewsListFragment fragment = (NewsListFragment) mPager.getAdapter().instantiateItem(mPager, mPager.getCurrentItem());
+        return fragment;
     }
 }
