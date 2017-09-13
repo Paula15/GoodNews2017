@@ -1,7 +1,10 @@
 package com.java.no16.ui.setting;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -32,6 +35,7 @@ public class SettingActivity extends BaseActivity {
     Repository<Result<CacheService>> repository;
     SettingSupplier supplier;
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,12 +44,14 @@ public class SettingActivity extends BaseActivity {
         initRepository();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void initView() {
         shieldWords = (TextView) findViewById(R.id.shieldWords);
         writeShieldWord = (EditText) findViewById(R.id.writeShieldWord);
         submit = (Button) findViewById(R.id.submitShieldWord);
         isNightMode = (Switch) findViewById(R.id.isNightMode);
+        isNightMode.setChecked(CacheService.isNight());
         isNightMode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -57,10 +63,11 @@ public class SettingActivity extends BaseActivity {
             }
         });
         isShowPicture = (Switch) findViewById(R.id.isShowPicture);
+        isShowPicture.setChecked(CacheService.isShowPicture());
         isShowPicture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (isNightMode.isChecked()) {
+                if (isShowPicture.isChecked()) {
                     CacheService.setShowImage(true);
                 } else {
                     CacheService.setShowImage(false);
@@ -77,6 +84,7 @@ public class SettingActivity extends BaseActivity {
                 }
                 else
                     CacheService.addKeywords(settedWord);
+                shieldWords.setText(TextUtils.join(",", CacheService.getKeywordList()));
             }
         });
     }
