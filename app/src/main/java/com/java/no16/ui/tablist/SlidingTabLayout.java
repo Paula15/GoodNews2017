@@ -164,6 +164,20 @@ public class SlidingTabLayout extends HorizontalScrollView {
         }
     }
 
+    public void switchToTab(int position) {
+        scrollToTab(position, 0);
+
+        if (mViewPagerPageChangeListener != null) {
+            mViewPagerPageChangeListener.onPageSelected(position);
+        }
+
+        mTabStrip.setSelectedPostion(position);
+    }
+
+    public int getSelectedPosition() {
+        return mTabStrip.getSelectedPosition();
+    }
+
     /**
      * Create a default view to be used for tabs. This is called if a custom tab view is not set via
      * {@link #setCustomTabView(int, int)}.
@@ -274,6 +288,10 @@ public class SlidingTabLayout extends HorizontalScrollView {
                 mViewPagerPageChangeListener.onPageScrolled(position, positionOffset,
                         positionOffsetPixels);
             }
+        }
+
+        public int getScrollState() {
+            return mScrollState;
         }
 
         @Override
