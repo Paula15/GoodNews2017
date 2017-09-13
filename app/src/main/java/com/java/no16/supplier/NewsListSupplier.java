@@ -34,8 +34,9 @@ public class NewsListSupplier implements Supplier<Result<List<SimpleNews>>> {
 
     private List<SimpleNews> getNewsList() {
         try {
-            Log.e("error", "getNewsList");
-            return GetNewsListService.getNewsList(pageNo, pageSize, category);
+            List<SimpleNews> ret =  GetNewsListService.getNewsList(pageNo, pageSize, category);
+            Log.e("@" + Thread.currentThread().getName() + " => " + category.getName(), "NewsListSupplier.getNewsList");
+            return ret;
         } catch (NewsException e) {
             Log.e(e.getErrorCode(), e.getMessage());
             // TODO(zpzhou): Add logic to get offline news.

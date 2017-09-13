@@ -88,10 +88,10 @@ public class DBManager {
 
     public static synchronized boolean queryExist(String newsId) {
         db = helper.getWritableDatabase();
-        Log.e("begin", "begin");
+//        Log.e("begin", "begin");
         Cursor c = db.rawQuery("SELECT * FROM news WHERE id = ?", new String[]{newsId});
-        Log.e("Query", "queryExist: " + Thread.currentThread().toString());
-        Log.e("end", "end");
+//        Log.e("Query", "queryExist: " + Thread.currentThread().toString());
+//        Log.e("end", "end");
         boolean exist = (c.getCount() > 0);
         c.close();
         db.close();

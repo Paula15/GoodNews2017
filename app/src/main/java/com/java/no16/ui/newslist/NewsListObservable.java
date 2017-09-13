@@ -1,5 +1,7 @@
 package com.java.no16.ui.newslist;
 
+import android.util.Log;
+
 import com.google.android.agera.BaseObservable;
 import com.java.no16.protos.Category;
 import com.java.no16.supplier.NewsListSupplier;
@@ -21,5 +23,6 @@ public class NewsListObservable extends BaseObservable {
         supplier.setPageSize(pageSize);
         supplier.setCategory(category);
         dispatchUpdate();
+        Log.e("@" + Thread.currentThread().getName() + " => " + category.getName(), "refreshNews");
     }
 }

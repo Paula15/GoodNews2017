@@ -94,7 +94,7 @@ public class GetNewsListService {
             simpleNews.separateImageUrl();
             simpleNews.setMark(CacheService.getMark(simpleNews.getNewsId()));
         }
-        Log.e("Finished", "getNewsList");
+        Log.e("@" + Thread.currentThread().getName() + " => " + category.getName(), "GetNewsListService.getNewsList");
         return newsList;
     }
 

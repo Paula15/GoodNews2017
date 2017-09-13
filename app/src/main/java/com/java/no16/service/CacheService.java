@@ -108,9 +108,9 @@ public class CacheService {
 
     public static synchronized boolean getMark(String newsId) {
         if (!markStatus.containsKey(newsId)) {
-            Log.e("getmark", "start");
+//            Log.e("getmark", "start");
             markStatus.put(newsId, dbManager.queryExist(newsId));
-            Log.e("getmark", "end");
+//            Log.e("getmark", "end");
         }
         return markStatus.get(newsId);
     }

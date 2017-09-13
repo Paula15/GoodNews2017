@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.java.no16.R;
+import com.java.no16.protos.Category;
 import com.java.no16.protos.SimpleNews;
 import com.java.no16.service.GetNewsListService;
 import com.squareup.picasso.Picasso;
@@ -22,7 +23,9 @@ import java.util.List;
  */
 
 public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.ViewHolder> {
+
     private List<SimpleNews> mNewsList;
+    private Category mCategory;
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public TextView newsTitleTV;
@@ -33,6 +36,11 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.ViewHo
             newsTitleTV = (TextView) v.findViewById(R.id.news_title);
             newsIV = (ImageView) v.findViewById(R.id.news_image);
         }
+    }
+
+    public NewsListAdapter(Context context, List<SimpleNews> newsList, Category category) {
+        this.mNewsList = newsList;
+        this.mCategory = category;
     }
 
     public NewsListAdapter(Context context, List<SimpleNews> newsList) {
@@ -72,6 +80,7 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.ViewHo
         mNewsList.clear();
         mNewsList.addAll(newsList);
         notifyDataSetChanged();
+        Log.e("@" + Thread.currentThread().getName() + " => " + mCategory.getName(), "update!!!!!");
     }
 
     public void addData(List<SimpleNews> newsList) {
