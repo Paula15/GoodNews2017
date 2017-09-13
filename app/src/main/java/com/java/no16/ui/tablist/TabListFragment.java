@@ -109,6 +109,8 @@ public class TabListFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         mCategoryList = (List<Category>) data.getSerializableExtra(TabEditActivity.KEY_CATEGORY_LIST);
         mUnusedCategoryList = (List<Category>) data.getSerializableExtra(TabEditActivity.KEY_UNUSED_CATEGORY_LIST);
-        Log.e("ONACTIVITYRESULT!!!!!!", mCategoryList.toString());
+        GetNewsListService.setCategoryList(mCategoryList);
+        mAdapter.updateData(mCategoryList);
+        mTabLayout.setViewPager(mPager);
     }
 }

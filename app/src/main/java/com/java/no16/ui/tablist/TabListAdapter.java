@@ -5,6 +5,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -41,5 +42,10 @@ public class TabListAdapter extends FragmentStatePagerAdapter {
     @Override
     public CharSequence getPageTitle(int position) {
         return mCategoryList.get(position).getName();
+    }
+
+    public void updateData(List<Category> categoryList) {
+        mCategoryList = categoryList;
+        notifyDataSetChanged();
     }
 }
