@@ -3,7 +3,6 @@ package com.java.no16.service;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 import com.java.no16.database.DBManager;
 import com.java.no16.protos.Category;
@@ -165,7 +164,7 @@ public class CacheService {
         dbManager.add(newsDetail);
     }
 
-    public static List<SimpleNews> getOfflineNewsList(int pageNo, int pageSize, Category category) throws NewsException {
+    public static synchronized List<SimpleNews> getOfflineNewsList(int pageNo, int pageSize, Category category) throws NewsException {
         return dbManager.queryNewsList(pageNo, pageSize, category);
     }
 

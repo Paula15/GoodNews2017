@@ -1,5 +1,7 @@
 package com.java.no16.service;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -9,8 +11,14 @@ import com.java.no16.protos.NewsException;
 import com.java.no16.protos.ImageUrlJsonParser;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -95,5 +103,39 @@ public class GetNewsDetailService {
 
     public static void setFavorite(String newsId, boolean favorite) {
         CacheService.setFavorite(newsId, favorite);
+    }
+
+    public static synchronized List<Bitmap> getImages(List<String> urls) {
+        List<Bitmap> images = new ArrayList<>();
+        for (String url : urls) {
+            try {
+                images.add(getImage(url));
+            } catch (NewsException e) {
+                Log.e(e.getErrorCode(), e.getMessage());
+            }
+        }
+        return images;
+    }
+
+    public static synchronized Bitmap getImage(String path) throws NewsException {
+        URL url;
+        try {
+            url = new URL(path);
+        } catch (MalformedURLException e) {
+            throw new NewsException(NewsException.NETWORK_ERROR, String.format(NewsException.IMAGE_NOT_FOUND, path));
+        }
+        try {
+            HttpURLConnection conn = (HttpURLConnection)url.openConnection();
+            conn.setConnectTimeout(5000);
+            conn.setRequestMethod("GET");
+            if(conn.getResponseCode() == 200){
+                InputStream inputStream = conn.getInputStream();
+                return BitmapFactory.decodeStream(inputStream);
+            } else {
+                throw new NewsException(NewsException.NETWORK_ERROR, String.format(NewsException.IMAGE_NOT_FOUND, path));
+            }
+        } catch (IOException e) {
+            throw new NewsException(NewsException.NETWORK_ERROR, String.format(NewsException.IMAGE_NOT_FOUND, path));
+        }
     }
 }

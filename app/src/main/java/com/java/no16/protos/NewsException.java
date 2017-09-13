@@ -15,6 +15,8 @@ public class NewsException extends Exception {
     public static final String NEWS_ERROR = "NewsException";
     public static final String INDEX_OUT_OF_BOUND_MESSAGE = "The indexs in request message are out of bound.";
     public static final String NEWS_ID_NOT_EXIST_MESSAGE = "The news_id %s doesn't exist in database.";
+    public static final String NETWORK_ERROR = "NetworkException";
+    public static final String IMAGE_NOT_FOUND = "Image not found in path %s.";
 
     public static final String EXIT_INFO = "ExitInfo";
     public static final String EXIT_MESSAGE = "The app exits formally.";
