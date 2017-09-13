@@ -55,7 +55,6 @@ public class DBManager {
         Cursor c;
         if (category == Category.ALL) c = db.rawQuery("SELECT * FROM news", null);
         else c = db.rawQuery("SELECT * FROM news WHERE category = ?", new String[]{category.getName()});
-        Log.e(c.getCount() + "", pageNo + "");
         if (c.getCount() <= (pageNo - 1) * pageSize) {
             throw new NewsException(NewsException.NEWS_ERROR, NewsException.INDEX_OUT_OF_BOUND_MESSAGE);
         }
@@ -88,9 +87,7 @@ public class DBManager {
 
     public static synchronized boolean queryExist(String newsId) {
         db = helper.getWritableDatabase();
-        Log.e("begin", "begin");
         Cursor c = db.rawQuery("SELECT * FROM news WHERE id = ?", new String[]{newsId});
-        Log.e("end", "end");
         boolean exist = (c.getCount() > 0);
         c.close();
         db.close();
@@ -110,16 +107,44 @@ public class DBManager {
         return ans;
     }
 
-    /**
-     * close database
-     */
-    public static void closeDB(Map<String, Boolean> favoriteStatus) {
+    public static List<SimpleNews> queryFavoriteList(int pageNo, int pageSize, Category category) throws NewsException {
         db = helper.getWritableDatabase();
+        List<SimpleNews> newsList = new ArrayList<>();
+        Cursor c;
+        if (category == Category.ALL) c = db.rawQuery("SELECT * FROM news WHERE favorite = ?", new String[]{Integer.toString(1)});
+        else c = db.rawQuery("SELECT * FROM news WHERE category = ? AND favorite = ?", new String[]{category.getName(), Integer.toString(1)});
+        //Log.e(c.getCount() + "", pageNo + "");
+        if (c.getCount() <= (pageNo - 1) * pageSize) {
+            throw new NewsException(NewsException.NEWS_ERROR, NewsException.INDEX_OUT_OF_BOUND_MESSAGE);
+        }
+        c.moveToPosition((pageNo - 1) * pageSize);
+        c.moveToPrevious();
+        while (c.moveToNext() && newsList.size() <= pageSize) {
+            SimpleNews news = new SimpleNews(c.getString(c.getColumnIndex("id")), c.getString(c.getColumnIndex("title")),
+                    c.getString(c.getColumnIndex("author")), c.getString(c.getColumnIndex("date")),
+                    c.getString(c.getColumnIndex("content")), "", true);
+            if (news.getDescription().length() > 50) news.setDescription(news.getDescription().substring(0, 50));
+            newsList.add(news);
+        }
+        c.close();
+        db.close();
+        return newsList;
+    }
+
+    public static void updateFavorite(Map<String, Boolean> favoriteStatus) {
+        db = helper.getWritableDatabase();
+        Log.e("updateFavorite", "begin");
         for (String newsId : favoriteStatus.keySet()) {
             ContentValues contentValues = new ContentValues();
             contentValues.put("favorite", favoriteStatus.get(newsId) ? 1 : 0);
             db.update("news", contentValues, "id='" + newsId + "'", null);
         }
+        Log.e("updateFavorite", "end");
         db.close();
+    }
+
+    /** Closes database. */
+    public static void closeDB(Map<String, Boolean> favoriteStatus) {
+        updateFavorite(favoriteStatus);
     }
 }

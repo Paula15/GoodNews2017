@@ -115,6 +115,11 @@ public class CacheService {
         return markStatus.get(newsId);
     }
 
+    public static synchronized List<SimpleNews> getFavoriteList(int pageNo, int pageSize, Category category) throws NewsException {
+        DBManager.updateFavorite(favoriteStatus);
+        return DBManager.queryFavoriteList(pageNo, pageSize, category);
+    }
+
     public static void setMark(String newsId) {
         markStatus.put(newsId, true);
     }

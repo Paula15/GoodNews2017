@@ -24,6 +24,7 @@ import retrofit2.Retrofit;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
 
+//TODO(wenj): complete exception part.
 /**
  * Service providing news list view with corresponding data.
  */
@@ -131,5 +132,9 @@ public class GetNewsListService {
             Log.e(NewsException.GET_IMAGE_ERROR, String.format(NewsException.GET_IMAGE_MESSAGE, title));
             return "";
         }
+    }
+
+    public static List<SimpleNews> getFavoriteList(int pageNo, int pageSize, Category category) throws NewsException {
+        return CacheService.getFavoriteList(pageNo, pageSize, category);
     }
 }
