@@ -1,6 +1,7 @@
 package com.java.no16.ui.newslist;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -24,6 +25,7 @@ import java.util.List;
 
 public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.ViewHolder> {
 
+    private Context mContext;
     private List<SimpleNews> mNewsList;
     private Category mCategory;
 
@@ -39,6 +41,7 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.ViewHo
     }
 
     public NewsListAdapter(Context context, List<SimpleNews> newsList, Category category) {
+        this.mContext = context;
         this.mNewsList = newsList;
         this.mCategory = category;
     }
@@ -59,8 +62,11 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.ViewHo
     public void onBindViewHolder(ViewHolder holder, int position) {
         SimpleNews simpleNews = mNewsList.get(position);
         holder.newsTitleTV.setText(mNewsList.get(position).getTitle());
+        if (simpleNews.isMark()) {
+            int colorGrey = ContextCompat.getColor(mContext, R.color.grey);
+            holder.newsTitleTV.setTextColor(colorGrey);
+        }
         Glide.clear(holder.newsIV);
-
         Glide.with(holder.newsIV.getContext())
                 .load(simpleNews.getImageUrl())
                 .centerCrop()

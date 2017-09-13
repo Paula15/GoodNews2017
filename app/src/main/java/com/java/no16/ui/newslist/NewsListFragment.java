@@ -195,13 +195,18 @@ public class NewsListFragment extends Fragment implements Updatable {
         mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getActivity(), new RecyclerItemClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                String newsId = mAdapter.getItem(position).getNewsId();
+                SimpleNews simpleNews = mAdapter.getItem(position);
+                String newsId = simpleNews.getNewsId();
+                simpleNews.setMark(true);
+
                 Intent intent = new Intent(getActivity(), NewsDetailActivity.class);
                 ActivityOptionsCompat options =
                         ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(),
                                 view.findViewById(R.id.news_image), getString(R.string.transition_news_img));
                 intent.putExtra(NewsDetailActivity.NEWS, newsId);
                 ActivityCompat.startActivity(getActivity(), intent, options.toBundle());
+
+                mAdapter.notifyDataSetChanged();
             }
         }));
     }
