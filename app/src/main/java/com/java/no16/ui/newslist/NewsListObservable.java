@@ -18,7 +18,8 @@ public class NewsListObservable extends BaseObservable {
         this.supplier = supplier;
     }
 
-    public void refreshNews(int pageNo, int pageSize, Category category) {
+    public void refreshNews(String searchKey, int pageNo, int pageSize, Category category) {
+        supplier.setSearchKey(searchKey);
         supplier.setPageNo(pageNo);
         supplier.setPageSize(pageSize);
         supplier.setCategory(category);

@@ -9,6 +9,7 @@ import com.java.no16.protos.Category;
 import com.java.no16.protos.NewsException;
 import com.java.no16.protos.SimpleNews;
 import com.java.no16.service.GetNewsListService;
+import com.java.no16.service.GetSearchResultService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +21,7 @@ import java.util.List;
 public class NewsListSupplier implements Supplier<Result<List<SimpleNews>>> {
     int pageNo = 1, pageSize = 20;
     Category category = Category.ALL;
+    String searchKey = "";
 
     @NonNull
     @Override
@@ -34,7 +36,12 @@ public class NewsListSupplier implements Supplier<Result<List<SimpleNews>>> {
 
     private List<SimpleNews> getNewsList() {
         try {
-            List<SimpleNews> ret =  GetNewsListService.getNewsList(pageNo, pageSize, category);
+            List<SimpleNews> ret;
+            if (searchKey.isEmpty()) {
+                ret = GetNewsListService.getNewsList(pageNo, pageSize, category);
+            } else {
+                ret = GetSearchResultService.getSearchResult(searchKey, pageNo, pageSize, category);
+            }
             Log.e("@" + Thread.currentThread().getName() + " => " + category.getName(), "NewsListSupplier.getNewsList");
             return ret;
         } catch (NewsException e) {
@@ -66,5 +73,13 @@ public class NewsListSupplier implements Supplier<Result<List<SimpleNews>>> {
 
     public Category getCategory() {
         return category;
+    }
+
+    public void setSearchKey(String searchKey) {
+        this.searchKey = searchKey;
+    }
+
+    public String getSearchKey() {
+        return searchKey;
     }
 }

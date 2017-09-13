@@ -3,17 +3,22 @@ package com.java.no16.ui.newslist;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.android.agera.Receiver;
 import com.google.android.agera.Repositories;
 import com.google.android.agera.Repository;
@@ -24,8 +29,8 @@ import com.java.no16.protos.Category;
 import com.java.no16.protos.SimpleNews;
 import com.java.no16.supplier.NewsListSupplier;
 import com.java.no16.ui.newsdetail.NewsDetailActivity;
-import com.java.no16.ui.widget.DividerOffsetDecoration;
-import com.java.no16.ui.widget.RecyclerItemClickListener;
+import com.java.no16.ui.util.widget.DividerOffsetDecoration;
+import com.java.no16.ui.util.widget.RecyclerItemClickListener;
 import com.java.no16.util.ThreadPool;
 import com.jwenfeng.library.pulltorefresh.PullToRefreshLayout;
 import com.jwenfeng.library.pulltorefresh.BaseRefreshListener;
@@ -57,6 +62,9 @@ public class NewsListFragment extends Fragment implements Updatable {
     enum Status { REFRESHING, LOADING, NORMAL }
     private Status mStatus = Status.REFRESHING;
 
+    private FloatingActionButton mBtnSearch;
+    private String mSearchKey = "";
+
     public static NewsListFragment newInstance(Category category) {
         NewsListFragment fragment = new NewsListFragment();
 
@@ -76,6 +84,7 @@ public class NewsListFragment extends Fragment implements Updatable {
         initRecyclerView(view);
         initRepository(view);
         initAdapter(view);
+        initButtons(view);
         doRefresh();
 
         return view;
@@ -102,13 +111,21 @@ public class NewsListFragment extends Fragment implements Updatable {
     }
 
     private void doRefresh() {
-        mObservable.refreshNews(1, PAGE_SIZE, mCategory);
+        mObservable.refreshNews(mSearchKey, 1, PAGE_SIZE, mCategory);
         Log.e("@" + Thread.currentThread().getName() + " => " + mCategory.getName(), "doRefresh");
     }
 
     private void doLoadMore() {
         int pageNo = mNewsList.size() / PAGE_SIZE + 1;
-        mObservable.refreshNews(pageNo, PAGE_SIZE, mCategory);
+        mObservable.refreshNews(mSearchKey, pageNo, PAGE_SIZE, mCategory);
+    }
+
+    private void doSearch(String searchKey) {
+        mSearchKey = searchKey;
+        mAdapter.clearItems();
+        mStatus = Status.REFRESHING;
+        doRefresh();
+        Log.e("@" + Thread.currentThread().getName() + " => " + mCategory.getName(), "doSearch");
     }
 
     private void initCategory() {
@@ -161,7 +178,7 @@ public class NewsListFragment extends Fragment implements Updatable {
 
             @Override
             public void accept(@NonNull List<SimpleNews> value) {
-                Log.e("@" + Thread.currentThread().getName() + " => " + mCategory.getName(), "receive");
+                Log.e("@" + Thread.currentThread().getName() + " => " + mCategory.getName(), "receive" + value.size() + mSearchKey);
                 switch (mStatus) {
                     case NORMAL:
                         break;
@@ -210,4 +227,28 @@ public class NewsListFragment extends Fragment implements Updatable {
             }
         }));
     }
+
+    private void initButtons(View view) {
+        mBtnSearch = (FloatingActionButton) view.findViewById(R.id.btn_search);
+        mBtnSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new MaterialDialog.Builder(getActivity())
+                        .title(R.string.title_search)
+                        .widgetColorRes(R.color.colorPrimary)
+                        .positiveColorRes(R.color.colorPrimary)
+                        .input(R.string.input_hint, R.string.input_prefill, new MaterialDialog.InputCallback() {
+                            @Override
+                            public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
+                                if (!TextUtils.isEmpty(input)) {
+                                    doSearch(input.toString());
+                                } else {
+                                    doSearch("");
+                                }
+                            }
+                        }).show();
+            }
+        });
+    }
+
 }
