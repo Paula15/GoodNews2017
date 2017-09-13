@@ -3,6 +3,7 @@ package com.java.no16.ui.newsdetail;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -19,6 +20,11 @@ import com.google.android.agera.Repositories;
 import com.google.android.agera.Repository;
 import com.google.android.agera.Result;
 import com.google.android.agera.Updatable;
+import com.iflytek.cloud.InitListener;
+import com.iflytek.cloud.SpeechError;
+import com.iflytek.cloud.SpeechSynthesizer;
+import com.iflytek.cloud.SpeechUtility;
+import com.iflytek.cloud.SynthesizerListener;
 import com.java.no16.R;
 import com.java.no16.protos.NewsDetail;
 import com.java.no16.service.CacheService;
@@ -39,7 +45,10 @@ public class NewsDetailActivity extends BaseActivity implements Updatable {
     private NewsDetailSupplier newsDetailSupplier;
     private ImageView nextImage;
     private Toolbar toolbar;
+    private FloatingActionButton sound;
     public static final String NEWS = "news_key";
+    private boolean isSound;
+    private String content;
 
     private String newsDetail;
 
@@ -57,6 +66,21 @@ public class NewsDetailActivity extends BaseActivity implements Updatable {
         contentWebView = (ObservableWebView) findViewById(R.id.contentText);
         nextImage = (ImageView) findViewById(R.id.nextImage);
         setSupportActionBar(toolbar);
+        SpeechUtility.createUtility(NewsDetailActivity.this, "appid=59b8a72d");
+        isSound = false;
+        mySynthesizer = SpeechSynthesizer.createSynthesizer(this, myInitListener);
+        sound = (FloatingActionButton) findViewById(R.id.sound);
+        sound.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                isSound = !isSound;
+                if (isSound) {
+                    mySynthesizer.startSpeaking(content, mTtsListener);
+                } else {
+                    mySynthesizer.stopSpeaking();
+                }
+            }
+        });
         newsDetailSupplier = new NewsDetailSupplier();
         newsDetail = getIntent().getStringExtra(NEWS);
         newsDetailSupplier.setKey(newsDetail);
@@ -133,6 +157,7 @@ public class NewsDetailActivity extends BaseActivity implements Updatable {
                         imageView.setVisibility(View.INVISIBLE);
                     }
                     Log.e("isNight", String.valueOf(CacheService.isNight()));
+                    content = value.getContent();
                     if (CacheService.isNight()) {
                         Log.e("title: ", value.getTitle());
                         Log.e("content: ", value.getContent());
@@ -151,7 +176,7 @@ public class NewsDetailActivity extends BaseActivity implements Updatable {
                     } else {
                         Log.e("title: ", value.getTitle());
                         Log.e("content: ", value.getContent());
-                        String html = "<html> <head> " + "</head>" + "<body> <h1>" + value.getTitle() + "</h1><p>" + value.getContent() + "</p></body>";
+                        String html = "<html> <head> " + "</head>" + "<body> <h2>" + value.getTitle() + "</h2><p>" + value.getContent() + "</p></body>";
                         contentWebView.loadDataWithBaseURL(null, html, "text/html; charset=UTF-8", null, null);
                     }
                 }
@@ -177,8 +202,56 @@ public class NewsDetailActivity extends BaseActivity implements Updatable {
                 Toast.makeText(NewsDetailActivity.this, "Star selected", Toast.LENGTH_SHORT).show();
                 startActivity(new Intent(this, SettingActivity.class));
                 return true;
+            case R.id.menu_share:
+                // TODO(bellasong):
+                // Share.
             default:
                 return super.onOptionsItemSelected(menuItem);
         }
     }
+    private SpeechSynthesizer mySynthesizer;
+
+    private InitListener myInitListener = new InitListener() {
+        @Override
+        public void onInit(int code) {
+            Log.d("mySynthesiezer:", "InitListener init() code = " + code);
+        }
+    };
+
+    private SynthesizerListener mTtsListener = new SynthesizerListener() {
+        @Override
+        public void onSpeakBegin() {
+
+        }
+
+        @Override
+        public void onBufferProgress(int i, int i1, int i2, String s) {
+
+        }
+
+        @Override
+        public void onSpeakPaused() {
+
+        }
+
+        @Override
+        public void onSpeakResumed() {
+
+        }
+
+        @Override
+        public void onSpeakProgress(int i, int i1, int i2) {
+
+        }
+
+        @Override
+        public void onCompleted(SpeechError speechError) {
+
+        }
+
+        @Override
+        public void onEvent(int i, int i1, int i2, Bundle bundle) {
+
+        }
+    };
 }

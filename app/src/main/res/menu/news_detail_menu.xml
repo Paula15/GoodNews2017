@@ -18,4 +18,9 @@
         android:icon="@drawable/ic_star_rate_black_18dp"
         app:showAsAction="always"
         android:title="Star"/>
+    <item
+        android:id="@+id/menu_share"
+        android:icon="@drawable/ic_share_black_24dp"
+        app:showAsAction="always"
+        android:title="Star"/>
 </menu>

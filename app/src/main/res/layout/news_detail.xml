@@ -53,6 +53,14 @@
         </RelativeLayout>
 
     </com.github.ksoichiro.android.observablescrollview.ObservableScrollView>
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/sound"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|right"
+        android:layout_margin="16dp"
+        android:src="@drawable/ic_surround_sound_black_24dp"
+        app:layout_anchorGravity="bottom|right|end" />
 
     <include layout="@layout/gradient_header" />
 </FrameLayout>
