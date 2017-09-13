@@ -53,7 +53,7 @@ public class NewsListFragment extends Fragment implements Updatable {
     private NewsListAdapter mAdapter;
     private PullToRefreshLayout mRefreshLayout;
 
-    private final int PAGE_SIZE = 20;
+    private final int PAGE_SIZE = 5;
     enum Status { REFRESHING, LOADING, NORMAL }
     private Status mStatus = Status.REFRESHING;
 
@@ -76,7 +76,7 @@ public class NewsListFragment extends Fragment implements Updatable {
         initRecyclerView(view);
         initRepository(view);
         initAdapter(view);
-        doRefresh();
+//        doRefresh();
 
         return view;
     }
@@ -85,6 +85,7 @@ public class NewsListFragment extends Fragment implements Updatable {
     public void onResume() {
         super.onResume();
         mRepository.addUpdatable(this);
+        Log.e("@" + Thread.currentThread().getName() + " => " + mCategory.getName(), "onResume");
     }
 
     @Override
@@ -96,10 +97,13 @@ public class NewsListFragment extends Fragment implements Updatable {
     @Override
     public void update() {
         mRepository.get().ifFailedSendTo(mThrowableReceiver).ifSucceededSendTo(mReceiver);
+        Log.e("@" + Thread.currentThread().getName() + " => " + mCategory.getName(), "update\n");
+//        Log.e("", "--------------------------------------------------------------------------");
     }
 
     private void doRefresh() {
         mObservable.refreshNews(1, PAGE_SIZE, mCategory);
+        Log.e("@" + Thread.currentThread().getName() + " => " + mCategory.getName(), "doRefresh");
     }
 
     private void doLoadMore() {
@@ -157,6 +161,7 @@ public class NewsListFragment extends Fragment implements Updatable {
 
             @Override
             public void accept(@NonNull List<SimpleNews> value) {
+                Log.e("@" + Thread.currentThread().getName() + " => " + mCategory.getName(), "receive");
                 switch (mStatus) {
                     case NORMAL:
                         break;
@@ -185,7 +190,7 @@ public class NewsListFragment extends Fragment implements Updatable {
 
     private void initAdapter(View view) {
         mNewsList = new ArrayList<SimpleNews>();
-        mAdapter = new NewsListAdapter(getActivity(), mNewsList);
+        mAdapter = new NewsListAdapter(getActivity(), mNewsList, mCategory);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getActivity(), new RecyclerItemClickListener.OnItemClickListener() {
             @Override

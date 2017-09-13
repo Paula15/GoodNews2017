@@ -10,7 +10,6 @@ import com.java.no16.protos.NewsException;
 import com.java.no16.protos.SimpleNews;
 import com.java.no16.service.GetNewsListService;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,13 +28,15 @@ public class NewsListSupplier implements Supplier<Result<List<SimpleNews>>> {
         if (list == null) {
             return Result.failure();
         } else {
-            return Result.success(getNewsList());
+            return Result.success(list);
         }
     }
 
     private List<SimpleNews> getNewsList() {
         try {
-            return GetNewsListService.getNewsList(pageNo, pageSize, category);
+            List<SimpleNews> ret =  GetNewsListService.getNewsList(pageNo, pageSize, category);
+            Log.e("@" + Thread.currentThread().getName() + " => " + category.getName(), "NewsListSupplier.getNewsList");
+            return ret;
         } catch (NewsException e) {
             Log.e(e.getErrorCode(), e.getMessage());
             // TODO(zpzhou): Add logic to get offline news.
