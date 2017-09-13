@@ -63,7 +63,7 @@ public class NewsListFragment extends Fragment implements Updatable {
     private Status mStatus = Status.REFRESHING;
 
     private FloatingActionButton mBtnSearch;
-    private String mSearchKey = "";
+    static private String mSearchKey = "";
 
     public static NewsListFragment newInstance(Category category) {
         NewsListFragment fragment = new NewsListFragment();
@@ -106,11 +106,10 @@ public class NewsListFragment extends Fragment implements Updatable {
     @Override
     public void update() {
         mRepository.get().ifFailedSendTo(mThrowableReceiver).ifSucceededSendTo(mReceiver);
-        Log.e("@" + Thread.currentThread().getName() + " => " + mCategory.getName(), "update\n");
-//        Log.e("", "--------------------------------------------------------------------------");
+        Log.e("@" + Thread.currentThread().getName() + " => " + mCategory.getName(), "update");
     }
 
-    private void doRefresh() {
+    public void doRefresh() {
         mObservable.refreshNews(mSearchKey, 1, PAGE_SIZE, mCategory);
         Log.e("@" + Thread.currentThread().getName() + " => " + mCategory.getName(), "doRefresh");
     }

@@ -1,5 +1,6 @@
 package com.java.no16;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -11,7 +12,6 @@ import com.java.no16.service.GetNewsDetailService;
 import com.java.no16.service.GetNewsListService;
 import com.java.no16.service.GetSearchResultService;
 import com.java.no16.ui.newslist.NewsListFragment;
-import com.java.no16.ui.tablist.TabListFragment;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -65,7 +65,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void gotoTabList() {
-        getSupportFragmentManager().beginTransaction().replace(R.id.frame_content, new TabListFragment()).commit();
-        mToolbar.setTitle(R.string.title_category);
+//        getSupportFragmentManager().beginTransaction().replace(R.id.frame_content, new TabListFragment()).commit();
+//        mToolbar.setTitle(R.string.title_category);
+        startActivity(new Intent(this, TabListActivity.class));
     }
 }
