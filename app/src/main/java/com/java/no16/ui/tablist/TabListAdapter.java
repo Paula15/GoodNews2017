@@ -31,7 +31,6 @@ public class TabListAdapter extends FragmentStatePagerAdapter {
     @Override
     public Fragment getItem(int position) {
         Category category = mCategoryList.get(position);
-        Log.e("@" + Thread.currentThread().getName() + " => " + category.getName(), "getItem");
         return NewsListFragment.newInstance(category);
     }
 

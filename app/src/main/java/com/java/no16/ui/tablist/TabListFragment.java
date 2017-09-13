@@ -112,6 +112,5 @@ public class TabListFragment extends Fragment {
         GetNewsListService.setCategoryList(mCategoryList);
         mAdapter.updateData(mCategoryList);
         mTabLayout.setViewPager(mPager);
-        Log.e("ONACTIVITYRESULT!!!!!!", mCategoryList.toString());
     }
 }
