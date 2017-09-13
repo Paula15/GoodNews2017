@@ -86,7 +86,7 @@ public class DBManager {
         return newsDetail;
     }
 
-    public static boolean queryExist(String newsId) {
+    public static synchronized boolean queryExist(String newsId) {
         db = helper.getWritableDatabase();
         Log.e("begin", "begin");
         Cursor c = db.rawQuery("SELECT * FROM news WHERE id = ?", new String[]{newsId});

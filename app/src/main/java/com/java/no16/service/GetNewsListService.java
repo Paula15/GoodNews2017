@@ -74,7 +74,7 @@ public class GetNewsListService {
     }
 
     /** Gets news list according to providing pageNo, pageSize, category. */
-    public static @Nullable List<SimpleNews> getNewsList(int pageNo, int pageSize, Category category) throws NewsException {
+    public static synchronized @Nullable List<SimpleNews> getNewsList(int pageNo, int pageSize, Category category) throws NewsException {
         List<SimpleNews> newsList;
         if (category == Category.ALL) {
             try {

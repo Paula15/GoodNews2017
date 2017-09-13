@@ -106,7 +106,7 @@ public class CacheService {
         favoriteStatus.put(newsId, favorite);
     }
 
-    public static boolean getMark(String newsId) {
+    public static synchronized boolean getMark(String newsId) {
         if (!markStatus.containsKey(newsId)) {
             Log.e("getmark", "start");
             markStatus.put(newsId, dbManager.queryExist(newsId));
