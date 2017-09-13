@@ -37,6 +37,8 @@ public class CacheService {
     /** Map storing newsIds and their corresponding favorite status which have been loading in cache. */
     private static Map<String, Boolean> favoriteStatus;
 
+    private static Map<String, Boolean> markStatus;
+
     private static boolean night;
     private static boolean showPicture;
     private static List<String> keywords;
@@ -62,6 +64,7 @@ public class CacheService {
             if (!str.isEmpty()) categoryList.add(Category.valueOf(str.trim()));
         }
         favoriteStatus = new HashMap<>();
+        markStatus = new HashMap<>();
         dbManager = new DBManager(activity);
     }
 
@@ -93,17 +96,27 @@ public class CacheService {
     }
 
     public static boolean getFavorite(String newsId) {
-        Log.e("CacheService", newsId);
-        if (favoriteStatus.containsKey(newsId)) {
-            return favoriteStatus.get(newsId);
+        if (!favoriteStatus.containsKey(newsId)) {
+            favoriteStatus.put(newsId, dbManager.queryFavorite(newsId));
         }
-        Log.e("CacheService", newsId);
-        return dbManager.queryFavorite(newsId);
-        //return false;
+        return favoriteStatus.get(newsId);
     }
 
     public static void setFavorite(String newsId, boolean favorite) {
         favoriteStatus.put(newsId, favorite);
+    }
+
+    public static boolean getMark(String newsId) {
+        if (!markStatus.containsKey(newsId)) {
+            Log.e("getmark", "start");
+            markStatus.put(newsId, dbManager.queryExist(newsId));
+            Log.e("getmark", "end");
+        }
+        return markStatus.get(newsId);
+    }
+
+    public static void setMark(String newsId) {
+        markStatus.put(newsId, true);
     }
 
     public static boolean isNight() {
@@ -143,6 +156,7 @@ public class CacheService {
     }
 
     public static void storeNewsDetail(NewsDetail newsDetail) {
+        markStatus.put(newsDetail.getNewsId(), true);
         dbManager.add(newsDetail);
     }
 

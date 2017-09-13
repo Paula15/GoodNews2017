@@ -9,7 +9,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-import android.support.v4.view.NestedScrollingChild;
 import android.util.Log;
 
 import com.java.no16.protos.Category;
@@ -21,7 +20,6 @@ import com.java.no16.protos.SimpleNews;
 public class DBManager {
     private static DBHelper helper;
     private static SQLiteDatabase db;
-    private static DBManager instance;
 
     public DBManager(Context context) {
         helper = new DBHelper(context);
@@ -88,17 +86,25 @@ public class DBManager {
         return newsDetail;
     }
 
+    public static boolean queryExist(String newsId) {
+        db = helper.getWritableDatabase();
+        Log.e("begin", "begin");
+        Cursor c = db.rawQuery("SELECT * FROM news WHERE id = ?", new String[]{newsId});
+        Log.e("end", "end");
+        boolean exist = (c.getCount() > 0);
+        c.close();
+        db.close();
+        return exist;
+    }
+
     public static boolean queryFavorite(String newsId) {
         db = helper.getWritableDatabase();
-        Log.e("queryFavorite0", newsId);
         Cursor c = db.rawQuery("SELECT * FROM news WHERE id = ?", new String[]{newsId});
-        Log.e("queryFavorite", c.getCount() + "");
         if (c.getCount() == 0) {
             return false;
         }
         c.moveToFirst();
         boolean ans = (c.getInt(c.getColumnIndex("favorite")) == 1);
-        Log.e("queryFavorite2", ans + "");
         c.close();
         db.close();
         return ans;
