@@ -136,6 +136,13 @@ public class NewsListFragment extends Fragment implements Updatable {
         Log.e("@" + Thread.currentThread().getName() + " => " + mCategory.getName(), "doFavorite");
     }
 
+    public void doHome() {
+        mAdapter.clearItems();
+        setFavoriteMode(false);
+        doRefresh();
+        Log.e("@" + Thread.currentThread().getName() + " => " + mCategory.getName(), "doHome");
+    }
+
     private void initCategory() {
         Bundle args = getArguments();
         mCategory = (args == null) ? Category.ALL : (Category) args.get(KEY_CATEGORY);

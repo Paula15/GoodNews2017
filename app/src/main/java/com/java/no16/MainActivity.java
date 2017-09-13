@@ -25,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
 
     private Toolbar mToolbar;
     private TabListFragment mTabListFragment;
+    private boolean isFavoriteMode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
                         onSettings();
                         break;
                     case R.id.action_favorite:
-                        onFavorite();
+                        if (isFavoriteMode) onHome(); else onFavorite();
                         break;
                 }
                 return true;
@@ -84,10 +85,21 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void onFavorite() {
+        isFavoriteMode = true;
         final NewsListFragment fragment = mTabListFragment.getCurrentFragment();
         fragment.doFavorite();
         mToolbar.getMenu().getItem(2).setIcon(ContextCompat.getDrawable(this, R.drawable.ic_home));
         // TODO(zpzhou): When favorite list is empty, NewsListFragment never finishes refreshing.
+    }
+
+    private void onHome() {
+        isFavoriteMode = false;
+        final NewsListFragment fragment = mTabListFragment.getCurrentFragment();
+        fragment.doHome();
+        mToolbar.getMenu().getItem(2).setIcon(ContextCompat.getDrawable(this, R.drawable.ic_favorite));
+        // TODO(bellasong): BUG IN NEWSDETAILS:
+        // If user stars a news and then navigate back, then click the second time,
+        // The star would be off.
     }
 
     private void gotoTabList() {
