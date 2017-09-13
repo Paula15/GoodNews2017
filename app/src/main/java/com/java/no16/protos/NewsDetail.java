@@ -1,5 +1,7 @@
 package com.java.no16.protos;
 
+import android.util.Log;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -11,6 +13,8 @@ import java.util.List;
  * Data structure providing detailed news information.
  */
 public class NewsDetail {
+
+    private static final String HREF = "<a href=\"https://baike.baidu.com/item/%s\"> %s </a>";
 
     @SerializedName("news_Title")
     @Expose
@@ -45,6 +49,14 @@ public class NewsDetail {
     @SerializedName("news_URL")
     @Expose
     private String newsUrl;
+
+    @SerializedName("locations")
+    @Expose
+    private List<StrPair> locations;
+
+    @SerializedName("persons")
+    @Expose
+    private List<StrPair> persons;
 
     private boolean favorite;
 
@@ -152,5 +164,24 @@ public class NewsDetail {
 
     public void setNewsUrl(String newsUrl) {
         this.newsUrl = newsUrl;
+    }
+
+    public List<StrPair> getLocations() {
+        return locations;
+    }
+
+    public List<StrPair> getPersons() {
+        return persons;
+    }
+
+    public void injectHyperlink() {
+        for (StrPair strPair : locations) {
+            Log.e("inject", String.format(HREF, strPair.getKey(), strPair.getKey()));
+            content = content.replaceAll(strPair.getKey(), String.format(HREF, strPair.getKey(), strPair.getKey()));
+        }
+        for (StrPair strPair : persons) {
+            Log.e("inject", String.format(HREF, strPair.getKey(), strPair.getKey()));
+            content = content.replaceAll(strPair.getKey(), String.format(HREF, strPair.getKey(), strPair.getKey()));
+        }
     }
 }

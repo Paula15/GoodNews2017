@@ -83,6 +83,7 @@ public class GetNewsDetailService {
         }
         newsDetail.setFavorite(CacheService.getFavorite(newsId));
         newsDetail.separateImageUrlString();
+        newsDetail.injectHyperlink();
         CacheService.storeNewsDetail(newsDetail);
         return newsDetail;
     }
