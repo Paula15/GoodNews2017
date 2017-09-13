@@ -84,7 +84,6 @@ public class NewsListFragment extends Fragment implements Updatable {
         initRecyclerView(view);
         initRepository(view);
         initAdapter(view);
-        initButtons(view);
         doRefresh();
 
         return view;
@@ -120,7 +119,7 @@ public class NewsListFragment extends Fragment implements Updatable {
         mObservable.refreshNews(mSearchKey, pageNo, PAGE_SIZE, mCategory);
     }
 
-    private void doSearch(String searchKey) {
+    public void doSearch(String searchKey) {
         mSearchKey = searchKey;
         mAdapter.clearItems();
         doRefresh();
@@ -225,29 +224,6 @@ public class NewsListFragment extends Fragment implements Updatable {
                 mAdapter.notifyDataSetChanged();
             }
         }));
-    }
-
-    private void initButtons(View view) {
-        mBtnSearch = (FloatingActionButton) view.findViewById(R.id.btn_search);
-        mBtnSearch.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                new MaterialDialog.Builder(getActivity())
-                        .title(R.string.title_search)
-                        .widgetColorRes(R.color.colorPrimary)
-                        .positiveColorRes(R.color.colorPrimary)
-                        .input(R.string.input_hint, R.string.input_prefill, new MaterialDialog.InputCallback() {
-                            @Override
-                            public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
-                                if (!TextUtils.isEmpty(input)) {
-                                    doSearch(input.toString());
-                                } else {
-                                    doSearch("");
-                                }
-                            }
-                        }).show();
-            }
-        });
     }
 
     public String getCategory() {

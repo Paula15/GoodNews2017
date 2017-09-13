@@ -1,16 +1,21 @@
 package com.java.no16;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.java.no16.protos.NewsException;
 import com.java.no16.service.CacheService;
 import com.java.no16.service.GetNewsDetailService;
 import com.java.no16.service.GetNewsListService;
 import com.java.no16.service.GetSearchResultService;
+import com.java.no16.ui.newslist.NewsListFragment;
 import com.java.no16.ui.tablist.TabListFragment;
 
 public class MainActivity extends AppCompatActivity {
@@ -54,7 +59,21 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void onSearch() {
-        // TODO(zpzhou)
+        final NewsListFragment fragment = mTabListFragment.getCurrentFragment();
+        new MaterialDialog.Builder(this)
+                .title(R.string.title_search)
+                .widgetColorRes(R.color.colorPrimary)
+                .positiveColorRes(R.color.colorPrimary)
+                .input(R.string.input_hint, R.string.input_prefill, new MaterialDialog.InputCallback() {
+                    @Override
+                    public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
+                        if (!TextUtils.isEmpty(input)) {
+                            fragment.doSearch(input.toString());
+                        } else {
+                            fragment.doSearch("");
+                        }
+                    }
+                }).show();
     }
 
     private void onSettings() {
