@@ -1,10 +1,12 @@
 package com.java.no16.supplier;
 
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.google.android.agera.Result;
 import com.google.android.agera.Supplier;
 import com.java.no16.protos.Category;
+import com.java.no16.protos.NewsException;
 import com.java.no16.protos.SimpleNews;
 import com.java.no16.service.GetNewsListService;
 
@@ -32,7 +34,13 @@ public class NewsListSupplier implements Supplier<Result<List<SimpleNews>>> {
     }
 
     private List<SimpleNews> getNewsList() {
-        return GetNewsListService.getNewsList(pageNo, pageSize, category);
+        try {
+            return GetNewsListService.getNewsList(pageNo, pageSize, category);
+        } catch (NewsException e) {
+            Log.e(e.getErrorCode(), e.getMessage());
+            // TODO(zpzhou): Add logic to get offline news.
+            return new ArrayList<SimpleNews>();
+        }
     }
 
     public void setPageNo(int pageNo) {

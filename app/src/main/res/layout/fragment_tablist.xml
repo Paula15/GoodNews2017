@@ -6,25 +6,27 @@
     android:orientation="vertical">
 
     <RelativeLayout
+        android:id="@+id/tablist_relative_layout"
         android:layout_width="match_parent"
         android:layout_height="48dp">
 
-        <ImageView
-            android:id="@+id/new_category_tip"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_marginRight="7.0dip"
-            android:layout_marginTop="6.0dip"
-            android:layout_toLeftOf="@+id/icon_category"
-            android:src="@drawable/ic_category_tab_tip"
-            android:visibility="gone"
-            />
+        <!--<ImageView-->
+            <!--android:id="@+id/new_category_tip"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_alignParentTop="true"-->
+            <!--android:layout_marginRight="7.0dip"-->
+            <!--android:layout_marginTop="6.0dip"-->
+            <!--android:layout_toLeftOf="@+id/icon_category"-->
+            <!--android:src="@drawable/ic_category_tab_tip"-->
+            <!--android:visibility="gone"-->
+            <!--/>-->
 
         <com.java.no16.ui.tablist.SlidingTabLayout
             android:id="@+id/tab_layout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent"
+            android:layout_toLeftOf="@+id/icon_category"/>
 
         <ImageView
             android:id="@+id/icon_category"
@@ -36,6 +38,7 @@
             android:paddingLeft="5dp"
             android:scaleType="center"
             android:src="@drawable/ic_category_tab"
+            android:clickable="true"
             />
     </RelativeLayout>
 

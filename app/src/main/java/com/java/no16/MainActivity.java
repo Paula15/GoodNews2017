@@ -5,15 +5,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 
-import com.java.no16.protos.NewsLoggerUtil;
+import com.java.no16.protos.NewsException;
 import com.java.no16.service.CacheService;
 import com.java.no16.service.GetNewsDetailService;
 import com.java.no16.service.GetNewsListService;
 import com.java.no16.service.GetSearchResultService;
 import com.java.no16.ui.newslist.NewsListFragment;
 import com.java.no16.ui.tablist.TabListFragment;
-
-import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -42,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
 
         CacheService.addKeywords("aaa;bbb;ccc");*/
 
-        gotoNewsList();
+//        gotoNewsList();
 //        startActivity(new Intent(this, SettingActivity.class));
         gotoTabList();
     }
