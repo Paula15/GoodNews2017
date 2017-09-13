@@ -15,9 +15,13 @@ import com.java.no16.service.GetNewsDetailService;
 
 public class NewsDetailSupplier implements Supplier<Result<NewsDetail>> {
     String key;
+    static boolean isOffline;
 
     public void setKey(String key) {
         this.key = key;
+    }
+    public synchronized void setIsOffline(boolean line) {
+        this.isOffline = line;
     }
 
     @NonNull
@@ -25,11 +29,21 @@ public class NewsDetailSupplier implements Supplier<Result<NewsDetail>> {
     public Result<NewsDetail> get() {
         NewsDetail newsDetail = null;
         try {
-            newsDetail = GetNewsDetailService.getNewsDetail(key);
-            if (newsDetail == null) {
-                return Result.failure();
+            if (!this.isOffline) {
+                newsDetail = GetNewsDetailService.getNewsDetail(key);
+                if (newsDetail == null) {
+                    return Result.failure();
+                } else {
+                    return Result.success(newsDetail);
+                }
             } else {
-                return Result.success(newsDetail);
+                Log.e("getting offline details", "getOffline");
+                newsDetail = GetNewsDetailService.getOfflineNewsDetail(key);
+                if (newsDetail == null) {
+                    return Result.failure();
+                } else {
+                    return Result.success(newsDetail);
+                }
             }
         } catch (NewsException e) {
             // TODO(bellasong): Add logic to get offline news.

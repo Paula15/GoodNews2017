@@ -9,11 +9,6 @@
         app:showAsAction="always"
         android:title="Settings"/>
     <item
-        android:id="@+id/menu_search"
-        android:icon="@drawable/ic_search_black_24dp"
-        app:showAsAction="always"
-        android:title="Search"/>
-    <item
         android:id="@+id/menu_star"
         android:icon="@drawable/ic_star_rate_black_18dp"
         app:showAsAction="always"

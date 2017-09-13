@@ -1,22 +1,20 @@
 package com.java.no16.ui.setting;
 
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
-import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Switch;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.agera.Receiver;
 import com.google.android.agera.Repositories;
 import com.google.android.agera.Repository;
 import com.google.android.agera.Result;
+import com.google.android.agera.Updatable;
 import com.java.no16.R;
 import com.java.no16.service.CacheService;
 import com.java.no16.supplier.SettingSupplier;
@@ -26,10 +24,7 @@ import com.java.no16.ui.common.BaseActivity;
  * Created by songshihong on 11/09/2017.
  */
 
-public class SettingActivity extends BaseActivity {
-    private TextView shieldWords;
-    private EditText writeShieldWord;
-    private Button submit;
+public class SettingActivity extends BaseActivity implements Updatable {
     private Switch isNightMode;
     private Switch isShowPicture;
     Repository<Result<CacheService>> repository;
@@ -47,9 +42,6 @@ public class SettingActivity extends BaseActivity {
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void initView() {
-        shieldWords = (TextView) findViewById(R.id.shieldWords);
-        writeShieldWord = (EditText) findViewById(R.id.writeShieldWord);
-        submit = (Button) findViewById(R.id.submitShieldWord);
         isNightMode = (Switch) findViewById(R.id.isNightMode);
         isNightMode.setChecked(CacheService.isNight());
         isNightMode.setOnClickListener(new View.OnClickListener() {
@@ -57,8 +49,12 @@ public class SettingActivity extends BaseActivity {
             public void onClick(View v) {
                 if (isNightMode.isChecked()) {
                     CacheService.setNight(true);
+                    LinearLayout linearLayout = (LinearLayout) findViewById(R.id.settings_layout);
+                    linearLayout.setBackgroundColor(Color.parseColor("#000000"));
                 } else {
                     CacheService.setNight(false);
+                    LinearLayout linearLayout = (LinearLayout) findViewById(R.id.settings_layout);
+                    linearLayout.setBackgroundColor(Color.parseColor("#ffffff"));
                 }
             }
         });
@@ -74,19 +70,6 @@ public class SettingActivity extends BaseActivity {
                 }
             }
         });
-        submit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String settedWord = String.valueOf(writeShieldWord.getText());
-                if (settedWord.equals("")) {
-                    Log.e("Error", "You cannot set an empty String!");
-                    Toast.makeText(SettingActivity.this, "You cannot set an empty String!", Toast.LENGTH_SHORT).show();
-                }
-                else
-                    CacheService.addKeywords(settedWord);
-                shieldWords.setText(TextUtils.join(",", CacheService.getKeywordList()));
-            }
-        });
     }
 
     @Override
@@ -95,11 +78,11 @@ public class SettingActivity extends BaseActivity {
                 .observe()
                 .onUpdatesPerLoop()
                 .thenGetFrom(supplier)
-                .compile();;
-        updateView();
+                .compile();
     }
 
-    private void updateView() {
+    @Override
+    public void update() {
         if (repository.get().isPresent()) {
             repository.get().ifFailedSendTo(new Receiver<Throwable>() {
                 @Override
@@ -110,9 +93,11 @@ public class SettingActivity extends BaseActivity {
                 @Override
                 public void accept(@NonNull final CacheService value) {
                     if (value.isNight()) {
-                        // TODO(bellasong): write css
+                        LinearLayout linearLayout = (LinearLayout) findViewById(R.id.settings_layout);
+                        linearLayout.setBackgroundColor(Color.parseColor("#000000"));
                     } else {
-
+                        LinearLayout linearLayout = (LinearLayout) findViewById(R.id.settings_layout);
+                        linearLayout.setBackgroundColor(Color.parseColor("#ffffff"));
                     }
                 }
             });
