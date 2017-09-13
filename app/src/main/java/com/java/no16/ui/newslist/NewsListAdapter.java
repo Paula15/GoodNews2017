@@ -93,4 +93,9 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.ViewHo
         mNewsList.addAll(newsList);
         notifyDataSetChanged();
     }
+
+    public void clearItems() {
+        mNewsList.clear();
+        notifyDataSetChanged();
+    }
 }
