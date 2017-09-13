@@ -22,6 +22,7 @@ public class NewsListSupplier implements Supplier<Result<List<SimpleNews>>> {
     int pageNo = 1, pageSize = 20;
     Category category = Category.ALL;
     String searchKey = "";
+    boolean isFavoriteMode = false;
 
     @NonNull
     @Override
@@ -37,10 +38,14 @@ public class NewsListSupplier implements Supplier<Result<List<SimpleNews>>> {
     private List<SimpleNews> getNewsList() {
         try {
             List<SimpleNews> ret;
-            if (searchKey.isEmpty()) {
-                ret = GetNewsListService.getNewsList(pageNo, pageSize, category);
+            if (isFavoriteMode == false) {
+                if (searchKey.isEmpty()) {
+                    ret = GetNewsListService.getNewsList(pageNo, pageSize, category);
+                } else {
+                    ret = GetSearchResultService.getSearchResult(searchKey, pageNo, pageSize, category);
+                }
             } else {
-                ret = GetSearchResultService.getSearchResult(searchKey, pageNo, pageSize, category);
+                ret = GetNewsListService.getFavoriteList(pageNo, pageSize, category);
             }
             Log.e("@" + Thread.currentThread().getName() + " => " + category.getName(), "NewsListSupplier.getNewsList");
             return ret;
@@ -81,5 +86,13 @@ public class NewsListSupplier implements Supplier<Result<List<SimpleNews>>> {
 
     public String getSearchKey() {
         return searchKey;
+    }
+
+    public void setFavoriteMode(boolean favoriteMode) {
+        isFavoriteMode = favoriteMode;
+    }
+
+    public boolean getFavoriteMode() {
+        return isFavoriteMode;
     }
 }

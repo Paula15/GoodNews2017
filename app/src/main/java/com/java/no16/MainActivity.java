@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -83,7 +84,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void onFavorite() {
-        // TODO(zpzhou)
+        final NewsListFragment fragment = mTabListFragment.getCurrentFragment();
+        fragment.doFavorite();
+        mToolbar.getMenu().getItem(2).setIcon(ContextCompat.getDrawable(this, R.drawable.ic_home));
+        // TODO(zpzhou): When favorite list is empty, NewsListFragment never finishes refreshing.
     }
 
     private void gotoTabList() {

@@ -65,6 +65,8 @@ public class NewsListFragment extends Fragment implements Updatable {
     private FloatingActionButton mBtnSearch;
     static private String mSearchKey = "";
 
+    static private boolean isFavoriteMode = false;
+
     public static NewsListFragment newInstance(Category category) {
         NewsListFragment fragment = new NewsListFragment();
 
@@ -110,13 +112,13 @@ public class NewsListFragment extends Fragment implements Updatable {
 
     public void doRefresh() {
         mStatus = Status.REFRESHING;
-        mObservable.refreshNews(mSearchKey, 1, PAGE_SIZE, mCategory);
+        mObservable.refreshNews(mSearchKey, 1, PAGE_SIZE, mCategory, isFavoriteMode);
         Log.e("@" + Thread.currentThread().getName() + " => " + mCategory.getName(), "doRefresh");
     }
 
-    private void doLoadMore() {
+    public void doLoadMore() {
         int pageNo = mNewsList.size() / PAGE_SIZE + 1;
-        mObservable.refreshNews(mSearchKey, pageNo, PAGE_SIZE, mCategory);
+        mObservable.refreshNews(mSearchKey, pageNo, PAGE_SIZE, mCategory, isFavoriteMode);
     }
 
     public void doSearch(String searchKey) {
@@ -124,6 +126,14 @@ public class NewsListFragment extends Fragment implements Updatable {
         mAdapter.clearItems();
         doRefresh();
         Log.e("@" + Thread.currentThread().getName() + " => " + mCategory.getName(), "doSearch");
+    }
+
+    public void doFavorite() {
+        mSearchKey = "";
+        mAdapter.clearItems();
+        setFavoriteMode(true);
+        doRefresh();
+        Log.e("@" + Thread.currentThread().getName() + " => " + mCategory.getName(), "doFavorite");
     }
 
     private void initCategory() {
@@ -228,5 +238,13 @@ public class NewsListFragment extends Fragment implements Updatable {
 
     public String getCategory() {
         return mCategory.getName();
+    }
+
+    static public void setFavoriteMode(boolean favoriteMode) {
+        isFavoriteMode = favoriteMode;
+    }
+
+    static public boolean getFavoriteMode() {
+        return isFavoriteMode;
     }
 }
