@@ -1,48 +1,72 @@
 package com.java.no16;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.MenuItem;
 
 import com.java.no16.protos.NewsException;
 import com.java.no16.service.CacheService;
 import com.java.no16.service.GetNewsDetailService;
 import com.java.no16.service.GetNewsListService;
 import com.java.no16.service.GetSearchResultService;
-import com.java.no16.ui.newslist.NewsListFragment;
+import com.java.no16.ui.tablist.TabListFragment;
 
 public class MainActivity extends AppCompatActivity {
 
     private Toolbar mToolbar;
+    private TabListFragment mTabListFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mTabListFragment = new TabListFragment();
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        mToolbar.setTitle("");
-        setSupportActionBar(mToolbar);
+//        setSupportActionBar(mToolbar);
+
+        mToolbar.inflateMenu(R.menu.menu_toolbar_main);
+        mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.action_search:
+                        onSearch();
+                        break;
+                    case R.id.action_settings:
+                        onSettings();
+                        break;
+                    case R.id.action_favorite:
+                        onFavorite();
+                        break;
+                }
+                return true;
+            }
+        });
+
         GetNewsListService.initService();
         GetNewsDetailService.initService();
         GetSearchResultService.initService();
         CacheService.initService(this);
 
-        /*Log.e("KEYWORDLIST:", CacheService.getKeywordList().toString());
-        Log.e("SHOW_IMAGE:", CacheService.isShowPicture() + "");
-        Log.e("NIGHT:", CacheService.isNight() + "");
-        CacheService.setKeywordList(Arrays.asList("aaa"));
-        CacheService.setShowImage(false);
-        Log.e("KEYWORDLIST:", CacheService.getKeywordList().toString());
-        Log.e("SHOW_IMAGE:", CacheService.isShowPicture() + "");
-        Log.e("NIGHT:", CacheService.isNight() + "");
-
-        CacheService.addKeywords("aaa;bbb;ccc");*/
-
-//        gotoNewsList();
-//        startActivity(new Intent(this, SettingActivity.class));
         gotoTabList();
+    }
+
+    private void onSearch() {
+        // TODO(zpzhou)
+    }
+
+    private void onSettings() {
+        // TODO(zpzhou)
+    }
+
+    private void onFavorite() {
+        // TODO(zpzhou)
+    }
+
+    private void gotoTabList() {
+        getSupportFragmentManager().beginTransaction().replace(R.id.frame_content, mTabListFragment).commit();
     }
 
     @Override
@@ -59,14 +83,4 @@ public class MainActivity extends AppCompatActivity {
         super.onStop();
     }
 
-    private void gotoNewsList() {
-        getSupportFragmentManager().beginTransaction().replace(R.id.frame_content, new NewsListFragment()).commit();
-        mToolbar.setTitle(R.string.title_news);
-    }
-
-    private void gotoTabList() {
-//        getSupportFragmentManager().beginTransaction().replace(R.id.frame_content, new TabListFragment()).commit();
-//        mToolbar.setTitle(R.string.title_category);
-        startActivity(new Intent(this, TabListActivity.class));
-    }
 }
