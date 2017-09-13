@@ -1,8 +1,10 @@
 package com.java.no16.ui.newsdetail;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -31,6 +33,7 @@ import com.java.no16.service.CacheService;
 import com.java.no16.supplier.NewsDetailSupplier;
 import com.java.no16.ui.common.BaseActivity;
 import com.java.no16.ui.setting.SettingActivity;
+import com.java.no16.ui.share.ShareActivity;
 import com.java.no16.util.ThreadPool;
 
 /**
@@ -49,6 +52,8 @@ public class NewsDetailActivity extends BaseActivity implements Updatable {
     public static final String NEWS = "news_key";
     private boolean isSound;
     private String content;
+    private NewsDetail lastNewsDetail;
+    private Menu menu;
 
     private String newsDetail;
 
@@ -58,9 +63,11 @@ public class NewsDetailActivity extends BaseActivity implements Updatable {
         setContentView(R.layout.news_detail);
         initView();
         initRepository();
+        Log.e("Create", "gg");
     }
 
     protected void initView() {
+        Log.e("View created", "hhh");
         toolbar = (Toolbar) findViewById(R.id.tool_bar);
         imageView = (ImageView) findViewById(R.id.ivImage);
         contentWebView = (ObservableWebView) findViewById(R.id.contentText);
@@ -88,8 +95,10 @@ public class NewsDetailActivity extends BaseActivity implements Updatable {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        Log.e("Menu created", "233");
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.news_detail_menu, menu);
+        this.menu = menu;
         return true;
     }
 
@@ -119,10 +128,18 @@ public class NewsDetailActivity extends BaseActivity implements Updatable {
         repository.removeUpdatable(this);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void update() {
         Log.e("Update:", "updating");
         Log.e("repository.isPresent", String.valueOf(repository.get().isPresent()));
+        boolean color = CacheService.getFavorite(newsDetail);
+        if (color) {
+            menu.getItem(2).setIcon(R.drawable.ic_star_rate_white_18dp);
+        }
+        else {
+            menu.getItem(2).setIcon(R.drawable.ic_star_rate_black_18dp);
+        }
         if (repository.get().isPresent()) {
             repository.get().ifFailedSendTo(new Receiver<Throwable>() {
                 @Override
@@ -134,6 +151,7 @@ public class NewsDetailActivity extends BaseActivity implements Updatable {
                 @Override
                 public void accept(@NonNull final NewsDetail value) {
                     newsDetail = value.getNewsId();
+                    lastNewsDetail = value;
                     Log.e("NewsDetail", newsDetail);
                     if (CacheService.isShowPicture()) {
                         Log.e("showPic", String.valueOf(CacheService.isShowPicture()));
@@ -200,11 +218,22 @@ public class NewsDetailActivity extends BaseActivity implements Updatable {
                 // TODO(bellasong):
                 // Change the activity of class
                 Toast.makeText(NewsDetailActivity.this, "Star selected", Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(this, SettingActivity.class));
+                boolean color = CacheService.getFavorite(lastNewsDetail.getNewsId());
+                if (color) {
+                    menuItem.setIcon(R.drawable.ic_star_rate_black_18dp);
+                } else {
+                    menuItem.setIcon(R.drawable.ic_star_rate_white_18dp);
+                }
+                CacheService.setFavorite(lastNewsDetail.getNewsId(), !color);
                 return true;
             case R.id.menu_share:
-                // TODO(bellasong):
-                // Share.
+                Toast.makeText(NewsDetailActivity.this, "Share selected", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(this, ShareActivity.class);
+                intent.putExtra("url", "www.baidu.com");
+                intent.putExtra("title", lastNewsDetail.getTitle());
+                intent.putExtra("content", lastNewsDetail.getContent());
+                startActivity(intent);
+                return true;
             default:
                 return super.onOptionsItemSelected(menuItem);
         }
