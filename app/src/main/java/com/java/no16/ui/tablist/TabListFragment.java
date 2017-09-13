@@ -111,6 +111,7 @@ public class TabListFragment extends Fragment {
         mUnusedCategoryList = (List<Category>) data.getSerializableExtra(TabEditActivity.KEY_UNUSED_CATEGORY_LIST);
         if (mCategoryList.isEmpty()) {
             mCategoryList.add(Category.ALL);
+            mUnusedCategoryList.remove(Category.ALL);
         }
         GetNewsListService.setCategoryList(mCategoryList);
         if (mTabLayout.getSelectedPosition() >= mCategoryList.size()) {
