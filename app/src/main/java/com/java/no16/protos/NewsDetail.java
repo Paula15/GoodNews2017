@@ -42,6 +42,10 @@ public class NewsDetail {
     @Expose
     private String categoryString;
 
+    @SerializedName("news_URL")
+    @Expose
+    private String newsUrl;
+
     private boolean favorite;
 
     public NewsDetail(String title, String author, String date, String content, boolean favorite, List<String> imageUrls, String newsId) {
@@ -140,5 +144,13 @@ public class NewsDetail {
 
     public String getCategoryString() {
         return categoryString;
+    }
+
+    public String getNewsUrl() {
+        return newsUrl;
+    }
+
+    public void setNewsUrl(String newsUrl) {
+        this.newsUrl = newsUrl;
     }
 }

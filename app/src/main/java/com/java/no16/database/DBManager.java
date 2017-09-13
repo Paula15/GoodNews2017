@@ -49,7 +49,7 @@ public class DBManager {
         }
     }
 
-    public static List<SimpleNews> queryNewsList(int pageNo, int pageSize, Category category) throws NewsException {
+    public static synchronized List<SimpleNews> queryNewsList(int pageNo, int pageSize, Category category) throws NewsException {
         db = helper.getWritableDatabase();
         List<SimpleNews> newsList = new ArrayList<>();
         Cursor c;

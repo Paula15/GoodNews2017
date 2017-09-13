@@ -99,7 +99,7 @@ public class GetNewsListService {
         return newsList;
     }
 
-    public static @Nullable List<SimpleNews> getOfflineNewsList(int pageNo, int pageSize, Category category) throws NewsException {
+    public static synchronized @Nullable List<SimpleNews> getOfflineNewsList(int pageNo, int pageSize, Category category) throws NewsException {
         return CacheService.getOfflineNewsList(pageNo, pageSize, category);
     }
 
@@ -126,7 +126,7 @@ public class GetNewsListService {
     }
 
     /** Gets missing image with specified title. */
-    public static String getMissedImage(String title) {
+    public static synchronized String getMissedImage(String title) {
         try {
             return newsListHttpService.getMissedImage("resultjsonavatarnew", "utf-8", title, 0, 1).execute().body().getUrl();
         } catch (IOException e) {
@@ -135,7 +135,7 @@ public class GetNewsListService {
         }
     }
 
-    public static List<SimpleNews> getFavoriteList(int pageNo, int pageSize, Category category) throws NewsException {
+    public static synchronized List<SimpleNews> getFavoriteList(int pageNo, int pageSize, Category category) throws NewsException {
         return CacheService.getFavoriteList(pageNo, pageSize, category);
     }
 }
