@@ -23,6 +23,8 @@ import com.java.no16.ui.tablist.TabListFragment;
 
 public class MainActivity extends AppCompatActivity {
 
+    public static final int REQUEST_CODE_SETTINGS = 1;
+
     private Toolbar mToolbar;
     private TabListFragment mTabListFragment;
     private boolean isFavoriteMode;
@@ -81,7 +83,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void onSettings() {
-        startActivity(new Intent(this, SettingActivity.class));
+        startActivityForResult(new Intent(this, SettingActivity.class), REQUEST_CODE_SETTINGS);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        final NewsListFragment fragment = mTabListFragment.getCurrentFragment();
+        boolean isShowImage = data.getBooleanExtra(SettingActivity.KEY_IS_SHOW_IMAGE, true);
+        Log.e("onActivityResult", isShowImage + "");
+        fragment.doShowImage(isShowImage);
     }
 
     private void onFavorite() {

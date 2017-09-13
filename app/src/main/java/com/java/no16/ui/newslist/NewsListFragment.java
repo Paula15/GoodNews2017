@@ -143,6 +143,11 @@ public class NewsListFragment extends Fragment implements Updatable {
         Log.e("@" + Thread.currentThread().getName() + " => " + mCategory.getName(), "doHome");
     }
 
+    public void doShowImage(boolean isShowImage) {
+        mAdapter.notifyDataSetChanged();
+        Log.e("@" + Thread.currentThread().getName() + " => " + mCategory.getName(), "doShowImage");
+    }
+
     private void initCategory() {
         Bundle args = getArguments();
         mCategory = (args == null) ? Category.ALL : (Category) args.get(KEY_CATEGORY);

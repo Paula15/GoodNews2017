@@ -1,5 +1,6 @@
 package com.java.no16.ui.setting;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -25,6 +26,9 @@ import com.java.no16.ui.common.BaseActivity;
  */
 
 public class SettingActivity extends BaseActivity implements Updatable {
+
+    public static final String KEY_IS_SHOW_IMAGE = "is_show_image";
+
     private Switch isNightMode;
     private Switch isShowPicture;
     Repository<Result<CacheService>> repository;
@@ -102,6 +106,24 @@ public class SettingActivity extends BaseActivity implements Updatable {
                 }
             });
         }
+    }
+
+    @Override
+    public void onStop() {
+        onFinish();
+        super.onStop();
+    }
+
+    @Override
+    public void onBackPressed() {
+        onFinish();
+        super.onBackPressed();
+    }
+
+    private void onFinish() {
+        Intent data = new Intent();
+        data.putExtra(KEY_IS_SHOW_IMAGE, CacheService.isShowPicture());
+        setResult(RESULT_OK, data);
     }
 
 }
