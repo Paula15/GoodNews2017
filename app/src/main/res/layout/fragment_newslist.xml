@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!--<com.java.no16.ui.widget.RefreshLayout-->
+    <!--<com.java.no16.ui.util.widget.RefreshLayout-->
         <!--android:id="@+id/refresh_layout"-->
         <!--android:layout_below="@+id/appbar"-->
         <!--android:layout_width="match_parent"-->
@@ -17,7 +17,7 @@
             <!--android:scrollbars="none"-->
             <!--android:background="@color/light_grey"-->
             <!--/>-->
-    <!--</com.java.no16.ui.widget.RefreshLayout>-->
+    <!--</com.java.no16.ui.util.widget.RefreshLayout>-->
 
     <com.jwenfeng.library.pulltorefresh.PullToRefreshLayout
         xmlns:android="http://schemas.android.com/apk/res/android"

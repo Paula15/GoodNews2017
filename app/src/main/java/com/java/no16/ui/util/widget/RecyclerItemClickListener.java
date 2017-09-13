@@ -1,4 +1,4 @@
-package com.java.no16.ui.widget;
+package com.java.no16.ui.util.widget;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;

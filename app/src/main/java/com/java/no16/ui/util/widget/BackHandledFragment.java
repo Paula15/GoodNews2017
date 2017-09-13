@@ -1,4 +1,4 @@
-package com.java.no16.ui.widget;
+package com.java.no16.ui.util.widget;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;

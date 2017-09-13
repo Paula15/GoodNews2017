@@ -1,4 +1,4 @@
-package com.java.no16.ui.widget;
+package com.java.no16.ui.util.widget;
 
 /*
  * Copyright (C) 2013 The Android Open Source Project
