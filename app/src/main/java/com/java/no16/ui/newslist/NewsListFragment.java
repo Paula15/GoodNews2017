@@ -53,7 +53,7 @@ public class NewsListFragment extends Fragment implements Updatable {
     private NewsListAdapter mAdapter;
     private PullToRefreshLayout mRefreshLayout;
 
-    private final int PAGE_SIZE = 5;
+    private final int PAGE_SIZE = 15;
     enum Status { REFRESHING, LOADING, NORMAL }
     private Status mStatus = Status.REFRESHING;
 
@@ -76,7 +76,7 @@ public class NewsListFragment extends Fragment implements Updatable {
         initRecyclerView(view);
         initRepository(view);
         initAdapter(view);
-//        doRefresh();
+        doRefresh();
 
         return view;
     }
