@@ -96,6 +96,7 @@ public class DBManager {
         if (c.getCount() == 0) {
             return false;
         }
+        c.moveToFirst();
         boolean ans = (c.getInt(c.getColumnIndex("favorite")) == 1);
         Log.e("queryFavorite2", ans + "");
         c.close();
