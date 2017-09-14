@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -74,8 +75,8 @@ public class NewsDetailActivity extends BaseActivity implements Updatable {
         nextImage = (ImageView) findViewById(R.id.nextImage);
         setSupportActionBar(toolbar);
         SpeechUtility.createUtility(NewsDetailActivity.this, "appid=59b8a72d");
-        isSound = false;
         mySynthesizer = SpeechSynthesizer.createSynthesizer(this, myInitListener);
+        isSound = false;
         sound = (FloatingActionButton) findViewById(R.id.sound);
         sound.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -168,6 +169,7 @@ public class NewsDetailActivity extends BaseActivity implements Updatable {
                         imageView.setVisibility(View.INVISIBLE);
                     }
                     content = value.getContent();
+                    Log.e("content", content);
                     if (CacheService.isNight()) {
                         String css = "<style>\n" +
                                 "html, img, video {\n" +
@@ -227,6 +229,7 @@ public class NewsDetailActivity extends BaseActivity implements Updatable {
     private InitListener myInitListener = new InitListener() {
         @Override
         public void onInit(int code) {
+            Log.d("mySynthesiezer:", "InitListener init() code = " + code);
         }
     };
 

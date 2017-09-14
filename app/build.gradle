@@ -27,6 +27,11 @@ android {
             storeFile file("../debug.keystore")
         }
     }
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ["libs"]
+        }
+    }
 }
 
 
