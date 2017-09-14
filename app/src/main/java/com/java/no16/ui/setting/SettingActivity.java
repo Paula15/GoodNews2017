@@ -54,11 +54,11 @@ public class SettingActivity extends BaseActivity implements Updatable {
                 if (isNightMode.isChecked()) {
                     CacheService.setNight(true);
                     LinearLayout linearLayout = (LinearLayout) findViewById(R.id.settings_layout);
-                    linearLayout.setBackgroundColor(Color.parseColor("#000000"));
+                    linearLayout.setBackgroundColor(Color.parseColor("#007850"));
                 } else {
                     CacheService.setNight(false);
                     LinearLayout linearLayout = (LinearLayout) findViewById(R.id.settings_layout);
-                    linearLayout.setBackgroundColor(Color.parseColor("#ffffff"));
+                    linearLayout.setBackgroundColor(Color.parseColor("#86C2B7"));
                 }
             }
         });

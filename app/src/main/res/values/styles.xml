@@ -17,7 +17,7 @@
         <item name="colorAccent">@color/accent</item>
     </style>
     <style name="ColorSwitchStyle">
-        <item name="colorControlActivated">@color/colorPrimaryDark</item>
+        <item name="colorControlActivated">@color/darkGreen</item>
     </style>
     <style name="Theme.Transparent" parent="AppTheme">
         <item name="android:background">#777777</item>
