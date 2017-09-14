@@ -77,7 +77,7 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.ViewHo
         holder.newsTitleTV.setText(mNewsList.get(position).getTitle());
         holder.newsDescriptionTV.setText(mNewsList.get(position).getDescription());
         if (CacheService.isNight()) {
-            holder.cardView.setCardBackgroundColor(ContextCompat.getColor(mContext, R.color.black));
+            holder.cardView.setCardBackgroundColor(ContextCompat.getColor(mContext, R.color.middle_grey));
             holder.newsTitleTV.setTextColor(ContextCompat.getColor(mContext, R.color.white));
             holder.newsDescriptionTV.setTextColor(ContextCompat.getColor(mContext, R.color.white));
         } else {
