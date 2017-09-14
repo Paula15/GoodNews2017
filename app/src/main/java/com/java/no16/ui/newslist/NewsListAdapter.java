@@ -84,7 +84,17 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.ViewHo
                         .centerCrop()
                         .into(holder.newsIV);
             if (simpleNews.getImageUrl() == null) {
+                Glide.clear(holder.newsIV);
                 final ViewHolder vh = holder;
+                final Handler handler = new Handler() {
+                    public void handleMessage(android.os.Message msg) {
+                        super.handleMessage(msg);
+                        vh.newsIV.setImageBitmap((Bitmap) msg.obj);
+
+                        Log.e("handleMessage", "msg");
+                    };
+                };
+
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
@@ -95,16 +105,9 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.ViewHo
                             Message message = Message.obtain();
                             message.obj = bitmap;
 
-                            Handler handler = new Handler() {
-                                public void handleMessage(android.os.Message msg) {
-                                    super.handleMessage(msg);
-                                    vh.newsIV.setImageBitmap((Bitmap) msg.obj);
-                                };
-                            };
-
                             handler.sendMessage(message);
                         } catch (Exception e) {
-
+                            Log.e("failed", "failed");
                         }
                     }
                 }).start();
