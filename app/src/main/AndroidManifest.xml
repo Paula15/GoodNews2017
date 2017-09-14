@@ -38,7 +38,6 @@
         <activity android:name=".ui.newsdetail.NewsDetailActivity"></activity>
         <activity android:name=".ui.setting.SettingActivity" android:theme="@style/Theme.Transparent"></activity>
         <activity android:name=".ui.tablist.tabedit.TabEditActivity"></activity>
-        <activity android:name=".TabListActivity"></activity>
         <activity
             android:name=".wxapi.WXEntryActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
