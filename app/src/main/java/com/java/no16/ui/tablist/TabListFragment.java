@@ -55,7 +55,7 @@ public class TabListFragment extends Fragment {
     public void onResume() {
         super.onResume();
         if (CacheService.isNight()) {
-            mTabLayout.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.black));
+            mTabLayout.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.middle_grey));
             mPager.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.grey));
         } else {
             mTabLayout.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.white));
