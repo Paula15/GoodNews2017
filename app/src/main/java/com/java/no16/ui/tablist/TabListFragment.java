@@ -13,6 +13,7 @@ import android.widget.ImageView;
 
 import com.java.no16.R;
 import com.java.no16.protos.Category;
+import com.java.no16.service.CacheService;
 import com.java.no16.service.GetNewsListService;
 import com.java.no16.ui.newslist.NewsListFragment;
 import com.java.no16.ui.tablist.tabedit.TabEditActivity;
@@ -48,6 +49,18 @@ public class TabListFragment extends Fragment {
         initButtons(view);
 
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (CacheService.isNight()) {
+            mTabLayout.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.black));
+            mPager.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.grey));
+        } else {
+            mTabLayout.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.white));
+            mPager.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.white));
+        }
     }
 
     private void initCategoryList() {
@@ -149,5 +162,10 @@ public class TabListFragment extends Fragment {
     public NewsListFragment getCurrentFragment() {
         NewsListFragment fragment = (NewsListFragment) mPager.getAdapter().instantiateItem(mPager, mCurrentPosition);
         return fragment;
+    }
+
+    public void setCurrentPosition(int position) {
+        mPager.setCurrentItem(position);
+        mCurrentPosition = position;
     }
 }

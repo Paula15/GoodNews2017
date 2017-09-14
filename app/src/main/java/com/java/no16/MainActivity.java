@@ -86,35 +86,26 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void onSettings() {
-//        startActivityForResult(new Intent(this, SettingActivity.class), REQUEST_CODE_SETTINGS);
+        startActivity(new Intent(this, SettingActivity.class));
     }
-
-//    @Override
-//    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        final NewsListFragment fragment = mTabListFragment.getCurrentFragment();
-//        boolean isShowImage = data.getBooleanExtra(SettingActivity.KEY_IS_SHOW_IMAGE, true);
-//        Log.e("onActivityResult", isShowImage + "");
-//        fragment.doShowImage(isShowImage);
-//    }
-
 
     private void onFavorite() {
         isFavoriteMode = true;
+        mTabListFragment.setCurrentPosition(0);
         final NewsListFragment fragment = mTabListFragment.getCurrentFragment();
         fragment.doFavorite();
+
         mToolbar.getMenu().getItem(2).setIcon(ContextCompat.getDrawable(this, R.drawable.ic_home));
         Toast.makeText(this, R.string.toast_favorite, Toast.LENGTH_SHORT).show();
-        // TODO(zpzhou): When favorite list is empty, NewsListFragment never finishes refreshing.
     }
 
     private void onHome() {
         isFavoriteMode = false;
+        mTabListFragment.setCurrentPosition(0);
         final NewsListFragment fragment = mTabListFragment.getCurrentFragment();
         fragment.doHome();
+
         mToolbar.getMenu().getItem(2).setIcon(ContextCompat.getDrawable(this, R.drawable.ic_favorite));
-        // TODO(bellasong): BUG IN NEWSDETAILS:
-        // If user stars a news and then navigate back, then click the second time,
-        // The star would be off.
     }
 
     private void gotoTabList() {
