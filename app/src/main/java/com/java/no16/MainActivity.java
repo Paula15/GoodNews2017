@@ -93,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
         Log.e("onActivityResult", isShowImage + "");
         fragment.doShowImage(isShowImage);
     }
-    
+
 
     private void onFavorite() {
         isFavoriteMode = true;
