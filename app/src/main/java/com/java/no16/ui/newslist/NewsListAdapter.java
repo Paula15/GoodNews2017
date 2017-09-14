@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -38,12 +39,14 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.ViewHo
     private Category mCategory;
 
     public class ViewHolder extends RecyclerView.ViewHolder {
+        public CardView cardView;
         public TextView newsTitleTV;
         public TextView newsDescriptionTV;
         public ImageView newsIV;
 
         public ViewHolder(View v) {
             super(v);
+            cardView = (CardView) v.findViewById(R.id.card_view);
             newsTitleTV = (TextView) v.findViewById(R.id.news_title);
             newsDescriptionTV = (TextView) v.findViewById(R.id.news_description);
             newsIV = (ImageView) v.findViewById(R.id.news_image);
@@ -73,10 +76,21 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.ViewHo
         final SimpleNews simpleNews = mNewsList.get(position);
         holder.newsTitleTV.setText(mNewsList.get(position).getTitle());
         holder.newsDescriptionTV.setText(mNewsList.get(position).getDescription());
+        if (CacheService.isNight()) {
+            holder.cardView.setCardBackgroundColor(ContextCompat.getColor(mContext, R.color.black));
+            holder.newsTitleTV.setTextColor(ContextCompat.getColor(mContext, R.color.white));
+            holder.newsDescriptionTV.setTextColor(ContextCompat.getColor(mContext, R.color.white));
+        } else {
+            holder.cardView.setCardBackgroundColor(ContextCompat.getColor(mContext, R.color.white));
+            holder.newsTitleTV.setTextColor(ContextCompat.getColor(mContext, R.color.black));
+            holder.newsDescriptionTV.setTextColor(ContextCompat.getColor(mContext, R.color.black));
+        }
         if (simpleNews.isMark()) {
             int colorGrey = ContextCompat.getColor(mContext, R.color.grey);
             holder.newsTitleTV.setTextColor(colorGrey);
         }
+
+        // Image stuffs
         Glide.clear(holder.newsIV);
         if (CacheService.isShowPicture()) {
                 Glide.with(holder.newsIV.getContext())
