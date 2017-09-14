@@ -7,7 +7,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -34,8 +33,9 @@ import com.java.no16.supplier.NewsDetailSupplier;
 import com.java.no16.ui.common.BaseActivity;
 import com.java.no16.ui.setting.SettingActivity;
 import com.java.no16.util.ThreadPool;
-import com.java.no16.wxapi.ShareActivity;
+import com.java.no16.wxapi.WXEntryActivity;
 
+import java.io.Serializable;
 import java.util.regex.Pattern;
 
 /**
@@ -65,11 +65,9 @@ public class NewsDetailActivity extends BaseActivity implements Updatable {
         setContentView(R.layout.news_detail);
         initView();
         initRepository();
-        //Log.e("Create", "gg");
     }
 
     protected void initView() {
-        //Log.e("View created", "hhh");
         toolbar = (Toolbar) findViewById(R.id.tool_bar);
         imageView = (ImageView) findViewById(R.id.ivImage);
         contentWebView = (ObservableWebView) findViewById(R.id.contentText);
@@ -98,7 +96,6 @@ public class NewsDetailActivity extends BaseActivity implements Updatable {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        //Log.e("Menu created", "233");
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.news_detail_menu, menu);
         this.menu = menu;
@@ -114,13 +111,11 @@ public class NewsDetailActivity extends BaseActivity implements Updatable {
                 .goTo(ThreadPool.executor)
                 .thenGetFrom(newsDetailSupplier)
                 .compile();
-        //Log.e("Initialing", "233");
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        //Log.e("onResume", "resume");
         newsDetailSupplier.setKey(newsDetail);
         repository.addUpdatable(this);
     }
@@ -134,13 +129,10 @@ public class NewsDetailActivity extends BaseActivity implements Updatable {
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void update() {
-        //Log.e("Update:", "updating");
-        //Log.e("repository.isPresent", String.valueOf(repository.get().isPresent()));
         if (repository.get().isPresent()) {
             repository.get().ifFailedSendTo(new Receiver<Throwable>() {
                 @Override
                 public void accept(@NonNull Throwable value) {
-                    //Log.e("Nothing", "GG");
                     Toast.makeText(NewsDetailActivity.this, "加载失败", Toast.LENGTH_SHORT).show();
                 }
             }).ifSucceededSendTo(new Receiver<NewsDetail>() {
@@ -155,9 +147,7 @@ public class NewsDetailActivity extends BaseActivity implements Updatable {
                     }
                     newsDetail = value.getNewsId();
                     lastNewsDetail = value;
-                    //Log.e("NewsDetail", newsDetail);
                     if (CacheService.isShowPicture()) {
-                        //Log.e("showPic", String.valueOf(CacheService.isShowPicture()));
                         nextImage.setVisibility(View.VISIBLE);
                         imageView.setVisibility(View.VISIBLE);
                         if (value.getImageUrlsCount() == 0) {
@@ -177,11 +167,8 @@ public class NewsDetailActivity extends BaseActivity implements Updatable {
                         nextImage.setVisibility(View.INVISIBLE);
                         imageView.setVisibility(View.INVISIBLE);
                     }
-                    //Log.e("isNight", String.valueOf(CacheService.isNight()));
                     content = value.getContent();
                     if (CacheService.isNight()) {
-                        //Log.e("title: ", value.getTitle());
-                        //Log.e("content: ", value.getContent());
                         String css = "<style>\n" +
                                 "html, img, video {\n" +
                                 "  -webkit-filter: invert(1) hue-rotate(180deg);\n" +
@@ -195,8 +182,6 @@ public class NewsDetailActivity extends BaseActivity implements Updatable {
                         String html = "<html> <head> " + css + "</head>" + "<body> <h1>" + value.getTitle() + "</h1><p>" + Pattern.compile("\\s\\s+").matcher(value.getContent()).replaceAll("<br>") + "</p></body>";
                         contentWebView.loadDataWithBaseURL(null, html, "text/html; charset=UTF-8", null, null);
                     } else {
-                        //Log.e("title: ", value.getTitle());
-                        //Log.e("content: ", value.getContent());
                         String html = "<html> <head> " + "</head>" + "<body> <h2>" + value.getTitle() + "</h2><p>" + Pattern.compile("\\s\\s+").matcher(value.getContent()).replaceAll("<br>") + "</p></body>";
                         contentWebView.loadDataWithBaseURL(null, html, "text/html; charset=UTF-8", null, null);
                     }
@@ -226,12 +211,12 @@ public class NewsDetailActivity extends BaseActivity implements Updatable {
                 return true;
             case R.id.menu_share:
                 Toast.makeText(NewsDetailActivity.this, "Share selected", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(this, ShareActivity.class);
+                Intent intent = new Intent(this, WXEntryActivity.class);
                 intent.putExtra("url", "www.baidu.com");
                 intent.putExtra("title", lastNewsDetail.getTitle());
                 intent.putExtra("content", lastNewsDetail.getContent());
+                intent.putExtra("ImageUrls", (Serializable) lastNewsDetail.getImageUrls());
                 startActivity(intent);
-                onStop();
                 return true;
             default:
                 return super.onOptionsItemSelected(menuItem);
@@ -242,7 +227,6 @@ public class NewsDetailActivity extends BaseActivity implements Updatable {
     private InitListener myInitListener = new InitListener() {
         @Override
         public void onInit(int code) {
-            //Log.d("mySynthesiezer:", "InitListener init() code = " + code);
         }
     };
 
