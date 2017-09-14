@@ -136,13 +136,13 @@ public class DBManager {
 
     public static synchronized void updateFavorite(Map<String, Boolean> favoriteStatus) {
         db = helper.getWritableDatabase();
-        Log.e("updateFavorite", "begin");
+        //Log.e("updateFavorite", "begin");
         for (String newsId : favoriteStatus.keySet()) {
             ContentValues contentValues = new ContentValues();
             contentValues.put("favorite", favoriteStatus.get(newsId) ? 1 : 0);
             db.update("news", contentValues, "id='" + newsId + "'", null);
         }
-        Log.e("updateFavorite", "end");
+        //Log.e("updateFavorite", "end");
         db.close();
     }
 

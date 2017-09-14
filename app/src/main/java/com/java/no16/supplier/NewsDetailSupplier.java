@@ -37,7 +37,7 @@ public class NewsDetailSupplier implements Supplier<Result<NewsDetail>> {
                     return Result.success(newsDetail);
                 }
             } else {
-                Log.e("getting offline details", "getOffline");
+                //Log.e("getting offline details", "getOffline");
                 newsDetail = GetNewsDetailService.getOfflineNewsDetail(key);
                 if (newsDetail == null) {
                     return Result.failure();

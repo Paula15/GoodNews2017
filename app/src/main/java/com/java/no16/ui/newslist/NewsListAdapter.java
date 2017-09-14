@@ -105,7 +105,7 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.ViewHo
                         super.handleMessage(msg);
                         vh.newsIV.setImageBitmap((Bitmap) msg.obj);
 
-                        Log.e("handleMessage", "msg");
+                        //Log.e("handleMessage", "msg");
                     };
                 };
 

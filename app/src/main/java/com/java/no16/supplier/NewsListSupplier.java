@@ -47,7 +47,7 @@ public class NewsListSupplier implements Supplier<Result<List<SimpleNews>>> {
             } else {
                 ret = GetNewsListService.getFavoriteList(pageNo, pageSize, category);
             }
-            Log.e("@" + Thread.currentThread().getName() + " => " + category.getName(), "NewsListSupplier.getNewsList");
+            //Log.e("@" + Thread.currentThread().getName() + " => " + category.getName(), "NewsListSupplier.getNewsList");
             return ret;
         } catch (NewsException e) {
             return null;

@@ -151,12 +151,12 @@ public class NewsListFragment extends Fragment implements Updatable {
 
     public void doShowImage(boolean isShowImage) {
         mAdapter.notifyDataSetChanged();
-        Log.e("@" + Thread.currentThread().getName() + " => " + mCategory.getName(), "doShowImage");
+        //Log.e("@" + Thread.currentThread().getName() + " => " + mCategory.getName(), "doShowImage");
     }
 
     private void doReceive(List<SimpleNews> value) {
         mRefreshLayout.showView(ViewStatus.CONTENT_STATUS);
-        Log.e("@" + Thread.currentThread().getName() + " => " + mCategory.getName(), "receive" + value.size() + mSearchKey);
+        //Log.e("@" + Thread.currentThread().getName() + " => " + mCategory.getName(), "receive" + value.size() + mSearchKey);
         switch (mStatus) {
             case NORMAL:
             case REFRESHING:
