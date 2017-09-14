@@ -10,6 +10,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.java.no16.protos.NewsException;
@@ -100,6 +101,7 @@ public class MainActivity extends AppCompatActivity {
         final NewsListFragment fragment = mTabListFragment.getCurrentFragment();
         fragment.doFavorite();
         mToolbar.getMenu().getItem(2).setIcon(ContextCompat.getDrawable(this, R.drawable.ic_home));
+        Toast.makeText(this, "左滑删除", Toast.LENGTH_SHORT).show();
         // TODO(zpzhou): When favorite list is empty, NewsListFragment never finishes refreshing.
     }
 

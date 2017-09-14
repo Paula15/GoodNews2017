@@ -1,24 +1,23 @@
 package com.java.no16.ui.newslist;
 
 import android.content.Intent;
+import android.graphics.Canvas;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.android.agera.Receiver;
 import com.google.android.agera.Repositories;
 import com.google.android.agera.Repository;
@@ -27,6 +26,7 @@ import com.google.android.agera.Updatable;
 import com.java.no16.R;
 import com.java.no16.protos.Category;
 import com.java.no16.protos.SimpleNews;
+import com.java.no16.service.CacheService;
 import com.java.no16.supplier.NewsListSupplier;
 import com.java.no16.ui.newsdetail.NewsDetailActivity;
 import com.java.no16.ui.util.widget.DividerOffsetDecoration;
@@ -86,6 +86,7 @@ public class NewsListFragment extends Fragment implements Updatable {
         initRecyclerView(view);
         initRepository(view);
         initAdapter(view);
+        initSwipeCallback();
         doRefresh();
 
         return view;
@@ -246,6 +247,42 @@ public class NewsListFragment extends Fragment implements Updatable {
                 mAdapter.notifyDataSetChanged();
             }
         }));
+    }
+
+    private void initSwipeCallback() {
+        //0则不执行拖动或者滑动
+        ItemTouchHelper.Callback mCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+                int position = viewHolder.getAdapterPosition();
+                CacheService.setFavorite(mNewsList.get(position).getNewsId(), false);
+                mNewsList.remove(position);
+                mAdapter.notifyItemRemoved(position);
+            }
+
+            @Override
+            public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+                if(actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
+                    //左右滑动时改变Item的透明度
+                    final float alpha = 1 - Math.abs(dX) / (float)viewHolder.itemView.getWidth();
+                    viewHolder.itemView.setAlpha(alpha);
+                    viewHolder.itemView.setTranslationX(dX);
+                }
+            }
+
+            @Override
+            public boolean isItemViewSwipeEnabled() {
+                return isFavoriteMode;
+            }
+        };
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(mCallback);
+        itemTouchHelper.attachToRecyclerView(mRecyclerView);
     }
 
     public String getCategory() {
