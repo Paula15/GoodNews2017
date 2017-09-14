@@ -19,6 +19,9 @@ import com.java.no16.service.GetNewsListService;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 /**
  * Created by zhou9 on 2017/9/9.
@@ -61,20 +64,38 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        SimpleNews simpleNews = mNewsList.get(position);
+        final SimpleNews simpleNews = mNewsList.get(position);
         holder.newsTitleTV.setText(mNewsList.get(position).getTitle());
         if (simpleNews.isMark()) {
             int colorGrey = ContextCompat.getColor(mContext, R.color.grey);
             holder.newsTitleTV.setTextColor(colorGrey);
         }
+        Glide.clear(holder.newsIV);
         if (CacheService.isShowPicture()) {
-            Glide.clear(holder.newsIV);
-            Glide.with(holder.newsIV.getContext())
-                    .load(simpleNews.getImageUrl())
-                    .centerCrop()
-                    .into(holder.newsIV);
-        } else {
-            Glide.clear(holder.newsIV);
+            if (simpleNews.getImageUrl() != null) {
+                Glide.with(holder.newsIV.getContext())
+                        .load(simpleNews.getImageUrl())
+                        .centerCrop()
+                        .into(holder.newsIV);
+            } else {
+                Future<String> future = Executors.newSingleThreadExecutor().submit(new Callable<String>() {
+                    @Override
+                    public String call() throws Exception {
+                        String queryStr = simpleNews.getTitle().length() < 5 ?
+                                simpleNews.getTitle() : simpleNews.getTitle().substring(0, 5);
+                        return GetNewsListService.getMissedImage(queryStr);
+                    }
+                });
+                try {
+                    String imageUrl = future.get();
+                    Glide.with(holder.newsIV.getContext())
+                            .load(imageUrl)
+                            .centerCrop()
+                            .into(holder.newsIV);
+                } catch (Exception e) {
+                    Log.e("FAILED", "failed to get missing image.");
+                }
+            }
         }
     }
 
