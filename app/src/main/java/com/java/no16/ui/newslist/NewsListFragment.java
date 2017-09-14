@@ -65,6 +65,8 @@ public class NewsListFragment extends Fragment implements Updatable {
     private FloatingActionButton mBtnSearch;
     static private String mSearchKey = "";
 
+    static private boolean isFavoriteMode = false;
+
     public static NewsListFragment newInstance(Category category) {
         NewsListFragment fragment = new NewsListFragment();
 
@@ -84,7 +86,6 @@ public class NewsListFragment extends Fragment implements Updatable {
         initRecyclerView(view);
         initRepository(view);
         initAdapter(view);
-        initButtons(view);
         doRefresh();
 
         return view;
@@ -110,21 +111,41 @@ public class NewsListFragment extends Fragment implements Updatable {
     }
 
     public void doRefresh() {
-        mObservable.refreshNews(mSearchKey, 1, PAGE_SIZE, mCategory);
+        mStatus = Status.REFRESHING;
+        mObservable.refreshNews(mSearchKey, 1, PAGE_SIZE, mCategory, isFavoriteMode);
         Log.e("@" + Thread.currentThread().getName() + " => " + mCategory.getName(), "doRefresh");
     }
 
-    private void doLoadMore() {
+    public void doLoadMore() {
         int pageNo = mNewsList.size() / PAGE_SIZE + 1;
-        mObservable.refreshNews(mSearchKey, pageNo, PAGE_SIZE, mCategory);
+        mObservable.refreshNews(mSearchKey, pageNo, PAGE_SIZE, mCategory, isFavoriteMode);
     }
 
-    private void doSearch(String searchKey) {
+    public void doSearch(String searchKey) {
         mSearchKey = searchKey;
         mAdapter.clearItems();
-        mStatus = Status.REFRESHING;
         doRefresh();
         Log.e("@" + Thread.currentThread().getName() + " => " + mCategory.getName(), "doSearch");
+    }
+
+    public void doFavorite() {
+        mSearchKey = "";
+        mAdapter.clearItems();
+        setFavoriteMode(true);
+        doRefresh();
+        Log.e("@" + Thread.currentThread().getName() + " => " + mCategory.getName(), "doFavorite");
+    }
+
+    public void doHome() {
+        mAdapter.clearItems();
+        setFavoriteMode(false);
+        doRefresh();
+        Log.e("@" + Thread.currentThread().getName() + " => " + mCategory.getName(), "doHome");
+    }
+
+    public void doShowImage(boolean isShowImage) {
+        mAdapter.notifyDataSetChanged();
+        Log.e("@" + Thread.currentThread().getName() + " => " + mCategory.getName(), "doShowImage");
     }
 
     private void initCategory() {
@@ -227,27 +248,15 @@ public class NewsListFragment extends Fragment implements Updatable {
         }));
     }
 
-    private void initButtons(View view) {
-        mBtnSearch = (FloatingActionButton) view.findViewById(R.id.btn_search);
-        mBtnSearch.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                new MaterialDialog.Builder(getActivity())
-                        .title(R.string.title_search)
-                        .widgetColorRes(R.color.colorPrimary)
-                        .positiveColorRes(R.color.colorPrimary)
-                        .input(R.string.input_hint, R.string.input_prefill, new MaterialDialog.InputCallback() {
-                            @Override
-                            public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
-                                if (!TextUtils.isEmpty(input)) {
-                                    doSearch(input.toString());
-                                } else {
-                                    doSearch("");
-                                }
-                            }
-                        }).show();
-            }
-        });
+    public String getCategory() {
+        return mCategory.getName();
     }
 
+    static public void setFavoriteMode(boolean favoriteMode) {
+        isFavoriteMode = favoriteMode;
+    }
+
+    static public boolean getFavoriteMode() {
+        return isFavoriteMode;
+    }
 }

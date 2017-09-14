@@ -5,6 +5,9 @@
     <string name="title_search">搜索</string>
     <string name="input_hint">请输入关键字</string>
     <string name="input_prefill"></string>
+    <string name="menu_search">搜索</string>
+    <string name="menu_settings">设置</string>
+    <string name="menu_favorite">收藏夹</string>
 
     <string name="title_activity_main">Android ObservableScrollView</string>
     <string name="title_activity_about">About this app</string>

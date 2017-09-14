@@ -36,6 +36,8 @@ import com.java.no16.ui.setting.SettingActivity;
 import com.java.no16.ui.share.ShareActivity;
 import com.java.no16.util.ThreadPool;
 
+import java.util.regex.Pattern;
+
 /**
  * Created by songshihong on 11/09/2017.
  */
@@ -91,6 +93,7 @@ public class NewsDetailActivity extends BaseActivity implements Updatable {
         newsDetailSupplier = new NewsDetailSupplier();
         newsDetail = getIntent().getStringExtra(NEWS);
         newsDetailSupplier.setKey(newsDetail);
+        newsDetailSupplier.setIsOffline(getIntent().getBooleanExtra("isOffline", false));
     }
 
     @Override
@@ -133,13 +136,6 @@ public class NewsDetailActivity extends BaseActivity implements Updatable {
     public void update() {
         Log.e("Update:", "updating");
         Log.e("repository.isPresent", String.valueOf(repository.get().isPresent()));
-        boolean color = CacheService.getFavorite(newsDetail);
-        if (color) {
-            menu.getItem(2).setIcon(R.drawable.ic_star_rate_white_18dp);
-        }
-        else {
-            menu.getItem(2).setIcon(R.drawable.ic_star_rate_black_18dp);
-        }
         if (repository.get().isPresent()) {
             repository.get().ifFailedSendTo(new Receiver<Throwable>() {
                 @Override
@@ -150,6 +146,13 @@ public class NewsDetailActivity extends BaseActivity implements Updatable {
             }).ifSucceededSendTo(new Receiver<NewsDetail>() {
                 @Override
                 public void accept(@NonNull final NewsDetail value) {
+                    boolean color = CacheService.getFavorite(newsDetail);
+                    if (color) {
+                        menu.getItem(1).setIcon(R.drawable.ic_star_rate_white_18dp);
+                    }
+                    else {
+                        menu.getItem(1).setIcon(R.drawable.ic_star_rate_black_18dp);
+                    }
                     newsDetail = value.getNewsId();
                     lastNewsDetail = value;
                     Log.e("NewsDetail", newsDetail);
@@ -189,16 +192,18 @@ public class NewsDetailActivity extends BaseActivity implements Updatable {
                                 "  background: black;\n" +
                                 "}\n" +
                                 "</style>";
-                        String html = "<html> <head> " + css + "</head>" + "<body> <h1>" + value.getTitle() + "</h1><p>" + value.getContent() + "</p></body>";
+                        String html = "<html> <head> " + css + "</head>" + "<body> <h1>" + value.getTitle() + "</h1><p>" + Pattern.compile("\\s\\s+").matcher(value.getContent()).replaceAll("<br>") + "</p></body>";
                         contentWebView.loadDataWithBaseURL(null, html, "text/html; charset=UTF-8", null, null);
                     } else {
                         Log.e("title: ", value.getTitle());
                         Log.e("content: ", value.getContent());
-                        String html = "<html> <head> " + "</head>" + "<body> <h2>" + value.getTitle() + "</h2><p>" + value.getContent() + "</p></body>";
+                        String html = "<html> <head> " + "</head>" + "<body> <h2>" + value.getTitle() + "</h2><p>" + Pattern.compile("\\s\\s+").matcher(value.getContent()).replaceAll("<br>") + "</p></body>";
                         contentWebView.loadDataWithBaseURL(null, html, "text/html; charset=UTF-8", null, null);
                     }
                 }
             });
+        } else {
+            Toast.makeText(NewsDetailActivity.this, "加载失败", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -208,15 +213,7 @@ public class NewsDetailActivity extends BaseActivity implements Updatable {
                 Toast.makeText(NewsDetailActivity.this, "Settings selected", Toast.LENGTH_SHORT).show();
                 startActivity(new Intent(this, SettingActivity.class));
                 return true;
-            case R.id.menu_search:
-                // TODO(bellasong):
-                // Change the activity of class
-                Toast.makeText(NewsDetailActivity.this, "Search selected", Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(this, SettingActivity.class));
-                return true;
             case R.id.menu_star:
-                // TODO(bellasong):
-                // Change the activity of class
                 Toast.makeText(NewsDetailActivity.this, "Star selected", Toast.LENGTH_SHORT).show();
                 boolean color = CacheService.getFavorite(lastNewsDetail.getNewsId());
                 if (color) {

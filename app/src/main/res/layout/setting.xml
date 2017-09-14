@@ -2,45 +2,37 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:id="@+id/settings_layout"
+    android:orientation="vertical"
+    android:weightSum="1">
+
+    <Switch
+        android:id="@+id/isShowPicture"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:gravity="clip_horizontal"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center"
+        android:checked="true"
+        android:text="ShowPicture"
+        android:textColor="#00ff48"
+        android:textOff="Off"
+        android:textOn="On"
+        android:textSize="25sp"
+        android:layout_weight="0.16" />
+
     <Switch
         android:id="@+id/isNightMode"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:gravity="clip_horizontal"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center"
+        android:layout_weight="0.13"
         android:checked="true"
         android:text="NightMode"
-        android:layout_centerHorizontal="true"
-        android:textOn="On"
+        android:textColor="#00ff48"
         android:textOff="Off"
-        android:layout_gravity="center"
-        android:textSize="25sp"/>
-    <Switch
-        android:id="@+id/isShowPicture"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:checked="true"
-        android:text="ShowPicture"
-        android:layout_centerHorizontal="true"
         android:textOn="On"
-        android:textOff="Off"
-        android:layout_gravity="center"
-        android:textSize="25sp"/>
-    <EditText
-        android:id="@+id/writeShieldWord"
-        style="@style/Widget.AppCompat.EditText"
-        android:layout_gravity="center"
-        android:layout_width="85dp"
-        android:layout_height="wrap_content" />
-    <Button
-        android:id="@+id/submitShieldWord"
-        android:layout_gravity="center"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:shadowColor="@color/accent"
-        android:text="Submit"/>
-    <TextView
-        android:id="@+id/shieldWords"
-        android:layout_gravity="center"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:textSize="25sp" />
 </LinearLayout>

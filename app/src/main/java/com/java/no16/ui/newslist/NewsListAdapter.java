@@ -14,6 +14,7 @@ import com.bumptech.glide.Glide;
 import com.java.no16.R;
 import com.java.no16.protos.Category;
 import com.java.no16.protos.SimpleNews;
+import com.java.no16.service.CacheService;
 import com.java.no16.service.GetNewsListService;
 import com.squareup.picasso.Picasso;
 
@@ -66,11 +67,15 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.ViewHo
             int colorGrey = ContextCompat.getColor(mContext, R.color.grey);
             holder.newsTitleTV.setTextColor(colorGrey);
         }
-        Glide.clear(holder.newsIV);
-        Glide.with(holder.newsIV.getContext())
-                .load(simpleNews.getImageUrl())
-                .centerCrop()
-                .into(holder.newsIV);
+        if (CacheService.isShowPicture()) {
+            Glide.clear(holder.newsIV);
+            Glide.with(holder.newsIV.getContext())
+                    .load(simpleNews.getImageUrl())
+                    .centerCrop()
+                    .into(holder.newsIV);
+        } else {
+            Glide.clear(holder.newsIV);
+        }
     }
 
     @Override

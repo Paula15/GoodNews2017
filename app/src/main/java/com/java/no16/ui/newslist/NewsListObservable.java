@@ -18,11 +18,12 @@ public class NewsListObservable extends BaseObservable {
         this.supplier = supplier;
     }
 
-    public void refreshNews(String searchKey, int pageNo, int pageSize, Category category) {
+    public void refreshNews(String searchKey, int pageNo, int pageSize, Category category, boolean isFavoriteMode) {
         supplier.setSearchKey(searchKey);
         supplier.setPageNo(pageNo);
         supplier.setPageSize(pageSize);
         supplier.setCategory(category);
+        supplier.setFavoriteMode(isFavoriteMode);
         dispatchUpdate();
         Log.e("@" + Thread.currentThread().getName() + " => " + category.getName(), "refreshNews");
     }
