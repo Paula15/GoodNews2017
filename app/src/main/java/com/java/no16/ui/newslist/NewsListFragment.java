@@ -63,7 +63,7 @@ public class NewsListFragment extends Fragment implements Updatable {
     private NewsListAdapter mAdapter;
     private PullToRefreshLayout mRefreshLayout;
 
-    private final int PAGE_SIZE = 15;
+    private final int PAGE_SIZE = 3;
     enum Status { REFRESHING, LOADING, NORMAL }
     private Status mStatus = Status.REFRESHING;
 
@@ -129,21 +129,21 @@ public class NewsListFragment extends Fragment implements Updatable {
 
     public void doSearch(String searchKey) {
         mSearchKey = searchKey;
-        mAdapter.clearItems();
+//        mAdapter.clearItems();
         doRefresh();
         Log.e("@" + Thread.currentThread().getName() + " => " + mCategory.getName(), "doSearch");
     }
 
     public void doFavorite() {
         mSearchKey = "";
-        mAdapter.clearItems();
+//        mAdapter.clearItems();
         setFavoriteMode(true);
         doRefresh();
         Log.e("@" + Thread.currentThread().getName() + " => " + mCategory.getName(), "doFavorite");
     }
 
     public void doHome() {
-        mAdapter.clearItems();
+//        mAdapter.clearItems();
         setFavoriteMode(false);
         doRefresh();
         Log.e("@" + Thread.currentThread().getName() + " => " + mCategory.getName(), "doHome");
@@ -155,6 +155,7 @@ public class NewsListFragment extends Fragment implements Updatable {
     }
 
     private void doReceive(List<SimpleNews> value) {
+        mRefreshLayout.showView(ViewStatus.CONTENT_STATUS);
         Log.e("@" + Thread.currentThread().getName() + " => " + mCategory.getName(), "receive" + value.size() + mSearchKey);
         switch (mStatus) {
             case NORMAL:

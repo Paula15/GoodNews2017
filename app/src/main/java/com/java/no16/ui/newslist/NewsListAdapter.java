@@ -1,6 +1,9 @@
 package com.java.no16.ui.newslist;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -15,6 +18,7 @@ import com.java.no16.R;
 import com.java.no16.protos.Category;
 import com.java.no16.protos.SimpleNews;
 import com.java.no16.service.CacheService;
+import com.java.no16.service.GetNewsDetailService;
 import com.java.no16.service.GetNewsListService;
 import com.squareup.picasso.Picasso;
 
@@ -35,11 +39,13 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.ViewHo
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public TextView newsTitleTV;
+        public TextView newsDescriptionTV;
         public ImageView newsIV;
 
         public ViewHolder(View v) {
             super(v);
             newsTitleTV = (TextView) v.findViewById(R.id.news_title);
+            newsDescriptionTV = (TextView) v.findViewById(R.id.news_description);
             newsIV = (ImageView) v.findViewById(R.id.news_image);
         }
     }
@@ -66,36 +72,62 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.ViewHo
     public void onBindViewHolder(ViewHolder holder, int position) {
         final SimpleNews simpleNews = mNewsList.get(position);
         holder.newsTitleTV.setText(mNewsList.get(position).getTitle());
+        holder.newsDescriptionTV.setText(mNewsList.get(position).getDescription());
         if (simpleNews.isMark()) {
             int colorGrey = ContextCompat.getColor(mContext, R.color.grey);
             holder.newsTitleTV.setTextColor(colorGrey);
         }
         Glide.clear(holder.newsIV);
         if (CacheService.isShowPicture()) {
-            if (simpleNews.getImageUrl() != null) {
                 Glide.with(holder.newsIV.getContext())
                         .load(simpleNews.getImageUrl())
                         .centerCrop()
                         .into(holder.newsIV);
-            } else {
-                Future<String> future = Executors.newSingleThreadExecutor().submit(new Callable<String>() {
+            if (simpleNews.getImageUrl() == null) {
+                final ViewHolder vh = holder;
+                new Thread(new Runnable() {
                     @Override
-                    public String call() throws Exception {
-                        String queryStr = simpleNews.getTitle().length() < 5 ?
-                                simpleNews.getTitle() : simpleNews.getTitle().substring(0, 5);
-                        return GetNewsListService.getMissedImage(queryStr);
+                    public void run() {
+                        try {
+                            Bitmap bitmap = GetNewsDetailService.getImage(
+                                    GetNewsListService.getMissedImage(simpleNews.getTitle()));
+
+                            Message message = Message.obtain();
+                            message.obj = bitmap;
+
+                            Handler handler = new Handler() {
+                                public void handleMessage(android.os.Message msg) {
+                                    super.handleMessage(msg);
+                                    vh.newsIV.setImageBitmap((Bitmap) msg.obj);
+                                };
+                            };
+
+                            handler.sendMessage(message);
+                        } catch (Exception e) {
+
+                        }
                     }
-                });
-                try {
-                    String imageUrl = future.get();
-                    Glide.with(holder.newsIV.getContext())
-                            .load(imageUrl)
-                            .centerCrop()
-                            .into(holder.newsIV);
-                } catch (Exception e) {
-                    Log.e("FAILED", "failed to get missing image.");
-                }
+                }).start();
             }
+//                if (simpleNews.getImageUrl() == null) {
+//                Future<String> future = Executors.newSingleThreadExecutor().submit(new Callable<String>() {
+//                    @Override
+//                    public String call() throws Exception {
+//                        String queryStr = simpleNews.getTitle().length() < 5 ?
+//                                simpleNews.getTitle() : simpleNews.getTitle().substring(0, 5);
+//                        return GetNewsListService.getMissedImage(queryStr);
+//                    }
+//                });
+//                try {
+//                    String imageUrl = future.get();
+//                    Glide.with(holder.newsIV.getContext())
+//                            .load(imageUrl)
+//                            .centerCrop()
+//                            .into(holder.newsIV);
+//                } catch (Exception e) {
+//                    Log.e("FAILED", "failed to get missing image.");
+//                }
+//            }
         }
     }
 

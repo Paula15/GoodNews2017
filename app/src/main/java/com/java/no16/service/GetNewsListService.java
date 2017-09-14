@@ -129,7 +129,7 @@ public class GetNewsListService {
     }
 
     /** Gets missing image with specified title. */
-    public static synchronized String getMissedImage(String title) {
+    public static String getMissedImage(String title) {
         try {
             return newsListHttpService.getMissedImage("resultjsonavatarnew", "utf-8", title, 0, 1).execute().body().getUrl();
         } catch (IOException e) {

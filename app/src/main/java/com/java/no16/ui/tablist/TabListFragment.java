@@ -122,8 +122,14 @@ public class TabListFragment extends Fragment {
         });
     }
 
+    public ImageView getButton() {
+        return mIconCategory;
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.e("onActivityResult", "request = " + requestCode + ", result = " + resultCode);
+
         mCategoryList = (List<Category>) data.getSerializableExtra(TabEditActivity.KEY_CATEGORY_LIST);
         mUnusedCategoryList = (List<Category>) data.getSerializableExtra(TabEditActivity.KEY_UNUSED_CATEGORY_LIST);
         if (mCategoryList.isEmpty()) {
@@ -134,6 +140,7 @@ public class TabListFragment extends Fragment {
         if (mTabLayout.getSelectedPosition() >= mCategoryList.size()) {
             mTabLayout.switchToTab(0);
         }
+        Log.e("onActivityResult", mCategoryList.toString());
         mAdapter.updateData(mCategoryList);
         mPager.setAdapter(mAdapter);
         mTabLayout.setViewPager(mPager);

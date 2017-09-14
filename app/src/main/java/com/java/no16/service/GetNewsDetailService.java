@@ -118,7 +118,7 @@ public class GetNewsDetailService {
         return images;
     }
 
-    public static synchronized Bitmap getImage(String path) throws NewsException {
+    public static Bitmap getImage(String path) throws NewsException {
         URL url;
         try {
             url = new URL(path);

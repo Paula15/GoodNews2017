@@ -10,6 +10,8 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -84,16 +86,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void onSettings() {
-        startActivityForResult(new Intent(this, SettingActivity.class), REQUEST_CODE_SETTINGS);
+//        startActivityForResult(new Intent(this, SettingActivity.class), REQUEST_CODE_SETTINGS);
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        final NewsListFragment fragment = mTabListFragment.getCurrentFragment();
-        boolean isShowImage = data.getBooleanExtra(SettingActivity.KEY_IS_SHOW_IMAGE, true);
-        Log.e("onActivityResult", isShowImage + "");
-        fragment.doShowImage(isShowImage);
-    }
+//    @Override
+//    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        final NewsListFragment fragment = mTabListFragment.getCurrentFragment();
+//        boolean isShowImage = data.getBooleanExtra(SettingActivity.KEY_IS_SHOW_IMAGE, true);
+//        Log.e("onActivityResult", isShowImage + "");
+//        fragment.doShowImage(isShowImage);
+//    }
 
 
     private void onFavorite() {
