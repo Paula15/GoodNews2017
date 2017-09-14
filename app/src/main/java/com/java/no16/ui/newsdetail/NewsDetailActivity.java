@@ -212,7 +212,7 @@ public class NewsDetailActivity extends BaseActivity implements Updatable {
             case R.id.menu_share:
                 Toast.makeText(NewsDetailActivity.this, "Share selected", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(this, WXEntryActivity.class);
-                intent.putExtra("url", "www.baidu.com");
+                intent.putExtra("url", lastNewsDetail.getNewsUrl());
                 intent.putExtra("title", lastNewsDetail.getTitle());
                 intent.putExtra("content", lastNewsDetail.getContent());
                 intent.putExtra("ImageUrls", (Serializable) lastNewsDetail.getImageUrls());
