@@ -163,4 +163,9 @@ public class TabListFragment extends Fragment {
         NewsListFragment fragment = (NewsListFragment) mPager.getAdapter().instantiateItem(mPager, mCurrentPosition);
         return fragment;
     }
+
+    public void setCurrentPosition(int position) {
+        mPager.setCurrentItem(position);
+        mCurrentPosition = position;
+    }
 }
