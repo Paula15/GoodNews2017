@@ -91,9 +91,12 @@ public class GetNewsListService {
             }
         }
 
+        Log.e("newsList", "in");
         for (SimpleNews simpleNews : newsList) {
             simpleNews.separateImageUrl();
+            Log.e("begin", "begin");
             simpleNews.setMark(CacheService.getMark(simpleNews.getNewsId()));
+            Log.e("end", "end");
         }
         Log.e("@" + Thread.currentThread().getName() + " => " + category.getName(), "GetNewsListService.getNewsList");
         return newsList;
@@ -104,12 +107,12 @@ public class GetNewsListService {
     }
 
     /** Gets categories in user's setting. */
-    public static List<Category> getCategoryList() {
+    public static synchronized List<Category> getCategoryList() {
         return new ArrayList<>(CacheService.getCategoryList());
     }
 
     /** Gets categories not in user's setting. */
-    public static List<Category> getUnusedCategoryList() {
+    public static synchronized List<Category> getUnusedCategoryList() {
         List<Category> categories = CacheService.getCategoryList();
         List<Category> unusedCategories = new ArrayList<>();
         for (Category category : CacheService.getAllCategoryList()) {
@@ -121,7 +124,7 @@ public class GetNewsListService {
     }
 
     /** Sets categories to user's setting. */
-    public static void setCategoryList(List<Category> categories) {
+    public static synchronized void setCategoryList(List<Category> categories) {
         CacheService.setCategoryList(categories);
     }
 

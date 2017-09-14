@@ -73,7 +73,7 @@ public class GetSearchResultService {
     }
 
     /** Gets news list according to providing pageNo, pageSize, category. */
-    public static @Nullable List<SimpleNews> getSearchResult(String keyword, int pageNo, int pageSize, Category category) {
+    public static synchronized @Nullable List<SimpleNews> getSearchResult(String keyword, int pageNo, int pageSize, Category category) {
         List<SimpleNews> searchResult;
         if (category == Category.ALL) {
             try {

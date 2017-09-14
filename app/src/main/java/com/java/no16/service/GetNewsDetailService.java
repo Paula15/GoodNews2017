@@ -74,7 +74,7 @@ public class GetNewsDetailService {
     }
 
     /** Gets news detail with newsId. */
-    public static NewsDetail getNewsDetail(String newsId) throws NewsException {
+    public static synchronized NewsDetail getNewsDetail(String newsId) throws NewsException {
         NewsDetail newsDetail;
         try {
             newsDetail = newsdetailHttpService.getNewsDetail(newsId).execute().body();
@@ -88,7 +88,7 @@ public class GetNewsDetailService {
         return newsDetail;
     }
 
-    public static NewsDetail getOfflineNewsDetail(String newsId) throws NewsException {
+    public static synchronized NewsDetail getOfflineNewsDetail(String newsId) throws NewsException {
         return CacheService.getOfflineNewsDetail(newsId);
     }
 

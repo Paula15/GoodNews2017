@@ -28,7 +28,7 @@ public class DBManager {
     /**
      * Adds news detail {@link com.java.no16.protos.NewsDetail}
      */
-    public static void add(NewsDetail newsDetail) {
+    public static synchronized void add(NewsDetail newsDetail) {
         db = helper.getWritableDatabase();
         db.beginTransaction();
         try {
@@ -71,7 +71,7 @@ public class DBManager {
         return newsList;
     }
 
-    public static NewsDetail queryNewsDetail(String newsId) throws NewsException {
+    public static synchronized NewsDetail queryNewsDetail(String newsId) throws NewsException {
         db = helper.getWritableDatabase();
         Cursor c = db.rawQuery("SELECT * FROM news WHERE id = ?", new String[]{newsId});
         if (c.getCount() == 0) {
@@ -97,7 +97,7 @@ public class DBManager {
         return exist;
     }
 
-    public static boolean queryFavorite(String newsId) {
+    public static synchronized boolean queryFavorite(String newsId) {
         db = helper.getWritableDatabase();
         Cursor c = db.rawQuery("SELECT * FROM news WHERE id = ?", new String[]{newsId});
         if (c.getCount() == 0) {
@@ -110,7 +110,7 @@ public class DBManager {
         return ans;
     }
 
-    public static List<SimpleNews> queryFavoriteList(int pageNo, int pageSize, Category category) throws NewsException {
+    public static synchronized List<SimpleNews> queryFavoriteList(int pageNo, int pageSize, Category category) throws NewsException {
         db = helper.getWritableDatabase();
         List<SimpleNews> newsList = new ArrayList<>();
         Cursor c;
@@ -134,7 +134,7 @@ public class DBManager {
         return newsList;
     }
 
-    public static void updateFavorite(Map<String, Boolean> favoriteStatus) {
+    public static synchronized void updateFavorite(Map<String, Boolean> favoriteStatus) {
         db = helper.getWritableDatabase();
         Log.e("updateFavorite", "begin");
         for (String newsId : favoriteStatus.keySet()) {
