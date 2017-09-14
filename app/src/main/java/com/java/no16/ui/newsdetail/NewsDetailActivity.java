@@ -33,8 +33,8 @@ import com.java.no16.service.CacheService;
 import com.java.no16.supplier.NewsDetailSupplier;
 import com.java.no16.ui.common.BaseActivity;
 import com.java.no16.ui.setting.SettingActivity;
-import com.java.no16.ui.share.ShareActivity;
 import com.java.no16.util.ThreadPool;
+import com.java.no16.wxapi.ShareActivity;
 
 import java.util.regex.Pattern;
 
@@ -212,6 +212,7 @@ public class NewsDetailActivity extends BaseActivity implements Updatable {
             case R.id.menu_settings:
                 Toast.makeText(NewsDetailActivity.this, "Settings selected", Toast.LENGTH_SHORT).show();
                 startActivity(new Intent(this, SettingActivity.class));
+                onStop();
                 return true;
             case R.id.menu_star:
                 Toast.makeText(NewsDetailActivity.this, "Star selected", Toast.LENGTH_SHORT).show();
@@ -230,6 +231,7 @@ public class NewsDetailActivity extends BaseActivity implements Updatable {
                 intent.putExtra("title", lastNewsDetail.getTitle());
                 intent.putExtra("content", lastNewsDetail.getContent());
                 startActivity(intent);
+                onStop();
                 return true;
             default:
                 return super.onOptionsItemSelected(menuItem);

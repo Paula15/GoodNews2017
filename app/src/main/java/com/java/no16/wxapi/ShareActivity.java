@@ -1,4 +1,4 @@
-package com.java.no16.ui.share;
+package com.java.no16.wxapi;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,14 +9,14 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.java.no16.R;
-import com.tencent.mm.sdk.openapi.BaseReq;
-import com.tencent.mm.sdk.openapi.BaseResp;
-import com.tencent.mm.sdk.openapi.IWXAPI;
-import com.tencent.mm.sdk.openapi.IWXAPIEventHandler;
-import com.tencent.mm.sdk.openapi.SendMessageToWX;
-import com.tencent.mm.sdk.openapi.WXAPIFactory;
-import com.tencent.mm.sdk.openapi.WXMediaMessage;
-import com.tencent.mm.sdk.openapi.WXWebpageObject;
+import com.tencent.mm.opensdk.modelbase.BaseReq;
+import com.tencent.mm.opensdk.modelbase.BaseResp;
+import com.tencent.mm.opensdk.modelmsg.SendMessageToWX;
+import com.tencent.mm.opensdk.modelmsg.WXMediaMessage;
+import com.tencent.mm.opensdk.modelmsg.WXWebpageObject;
+import com.tencent.mm.opensdk.openapi.IWXAPI;
+import com.tencent.mm.opensdk.openapi.IWXAPIEventHandler;
+import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 
 public class ShareActivity extends AppCompatActivity implements IWXAPIEventHandler {
     final private String AppId = "wx56a8c54118422311";
@@ -28,9 +28,9 @@ public class ShareActivity extends AppCompatActivity implements IWXAPIEventHandl
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wx);
 
-        api = WXAPIFactory.createWXAPI(this, AppId, false);
-        api.handleIntent(getIntent(), this);
+        api = WXAPIFactory.createWXAPI(this, null);
         api.registerApp(AppId);
+        api.handleIntent(getIntent(), this);
         ((Button) findViewById(R.id.ShareToFriends)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -58,12 +58,13 @@ public class ShareActivity extends AppCompatActivity implements IWXAPIEventHandl
 
     private void wechatShare(int flag){
         WXWebpageObject webpage = new WXWebpageObject();
-//        webpage.webpageUrl = getIntent().getStringExtra("url");
-        webpage.webpageUrl = "http://www.baidu.com";
+//        webpage.webpageUrl = "http://www.baidu.com";
+        webpage.webpageUrl = getIntent().getStringExtra("url");
         WXMediaMessage msg = new WXMediaMessage(webpage);
-//        msg.title = getIntent().getStringExtra("title");
+        //api.handleIntent(getIntent(), this);
+        msg.title = getIntent().getStringExtra("title");
 //        msg.description = getIntent().getStringExtra("content");
-        msg.title = "ggg";
+//        msg.title = "ggg";
         msg.description = "Content";
 //        Bitmap thumb = BitmapFactory.decodeResource(getResources(), R.drawable.ic_share_black_24dp);
 //        msg.setThumbImage(thumb);
@@ -79,13 +80,14 @@ public class ShareActivity extends AppCompatActivity implements IWXAPIEventHandl
         }
         Log.e("transaction", req.transaction);
         Log.e("message", req.message.description);
-        api.sendReq(req);
+        boolean temp = api.sendReq(req);
+        Log.e("api status", String.valueOf(temp));
         Log.e("sent","send");
     }
 
     @Override
     public void onReq(BaseReq baseReq) {
-
+        Log.e("call:", "OnReq");
     }
 
     @Override

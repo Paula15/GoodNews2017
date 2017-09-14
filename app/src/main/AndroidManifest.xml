@@ -31,11 +31,13 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.newsdetail.NewsDetailActivity"></activity>
-        <activity android:name=".ui.setting.SettingActivity"></activity>
+        <activity android:name=".ui.setting.SettingActivity" android:theme="@style/Theme.Transparent"></activity>
         <activity android:name=".ui.tablist.tabedit.TabEditActivity"></activity>
         <activity android:name=".TabListActivity"></activity>
-        <activity android:name=".ui.share.ShareActivity"
+        <activity android:name=".wxapi.ShareActivity"
             android:exported="true"></activity>
+        <meta-data android:name="TA_APPKEY" android:value="Aqcwx56a8c54118422311" />
+        <meta-data android:name="InstallChannel" android:value="play" />
     </application>
 
 </manifest>
