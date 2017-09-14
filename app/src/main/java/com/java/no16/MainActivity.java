@@ -101,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
         final NewsListFragment fragment = mTabListFragment.getCurrentFragment();
         fragment.doFavorite();
         mToolbar.getMenu().getItem(2).setIcon(ContextCompat.getDrawable(this, R.drawable.ic_home));
-        Toast.makeText(this, "左滑删除", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, R.string.toast_favorite, Toast.LENGTH_SHORT).show();
         // TODO(zpzhou): When favorite list is empty, NewsListFragment never finishes refreshing.
     }
 

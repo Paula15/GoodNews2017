@@ -3,6 +3,7 @@ package com.java.no16.ui.newslist;
 import android.content.Intent;
 import android.graphics.Canvas;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
@@ -17,6 +18,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.google.android.agera.Receiver;
 import com.google.android.agera.Repositories;
@@ -25,8 +27,10 @@ import com.google.android.agera.Result;
 import com.google.android.agera.Updatable;
 import com.java.no16.R;
 import com.java.no16.protos.Category;
+import com.java.no16.protos.NewsException;
 import com.java.no16.protos.SimpleNews;
 import com.java.no16.service.CacheService;
+import com.java.no16.service.GetNewsListService;
 import com.java.no16.supplier.NewsListSupplier;
 import com.java.no16.ui.newsdetail.NewsDetailActivity;
 import com.java.no16.ui.util.widget.DividerOffsetDecoration;
@@ -34,6 +38,7 @@ import com.java.no16.ui.util.widget.RecyclerItemClickListener;
 import com.java.no16.util.ThreadPool;
 import com.jwenfeng.library.pulltorefresh.PullToRefreshLayout;
 import com.jwenfeng.library.pulltorefresh.BaseRefreshListener;
+import com.jwenfeng.library.pulltorefresh.ViewStatus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -149,6 +154,25 @@ public class NewsListFragment extends Fragment implements Updatable {
         Log.e("@" + Thread.currentThread().getName() + " => " + mCategory.getName(), "doShowImage");
     }
 
+    private void doReceive(List<SimpleNews> value) {
+        Log.e("@" + Thread.currentThread().getName() + " => " + mCategory.getName(), "receive" + value.size() + mSearchKey);
+        switch (mStatus) {
+            case NORMAL:
+            case REFRESHING:
+                mAdapter.updateData(value);
+                if (value.isEmpty()) mRefreshLayout.showView(ViewStatus.EMPTY_STATUS);
+                break;
+            case LOADING:
+                mAdapter.addData(value);
+                break;
+            default:
+                break;
+        }
+        mRefreshLayout.finishRefresh();
+        mRefreshLayout.finishLoadMore();
+        mStatus = Status.NORMAL;
+    }
+
     private void initCategory() {
         Bundle args = getArguments();
         mCategory = (args == null) ? Category.ALL : (Category) args.get(KEY_CATEGORY);
@@ -163,6 +187,13 @@ public class NewsListFragment extends Fragment implements Updatable {
                     mStatus = Status.REFRESHING;
                     doRefresh();
                 }
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        // 结束刷新
+                        mRefreshLayout.finishRefresh();
+                    }
+                }, 2000);
             }
 
             @Override
@@ -172,6 +203,13 @@ public class NewsListFragment extends Fragment implements Updatable {
                     mStatus = Status.LOADING;
                     doLoadMore();
                 }
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        // 结束加载更多
+                        mRefreshLayout.finishLoadMore();
+                    }
+                }, 2000);
             }
         });
     }
@@ -199,29 +237,28 @@ public class NewsListFragment extends Fragment implements Updatable {
 
             @Override
             public void accept(@NonNull List<SimpleNews> value) {
-                Log.e("@" + Thread.currentThread().getName() + " => " + mCategory.getName(), "receive" + value.size() + mSearchKey);
-                switch (mStatus) {
-                    case NORMAL:
-                        break;
-                    case REFRESHING:
-                        mAdapter.updateData(value);
-                        break;
-                    case LOADING:
-                        mAdapter.addData(value);
-                        break;
-                    default:
-                        break;
-                }
-                mRefreshLayout.finishRefresh();
-                mRefreshLayout.finishLoadMore();
-                mStatus = Status.NORMAL;
+                Log.e("SUCCESS", "!");
+                doReceive(value);
             }
         };
 
         mThrowableReceiver = new Receiver<Throwable>() {
             @Override
             public void accept(@NonNull Throwable value) {
-                Log.e("mThrowableReceiver", "getNewsFailed!");
+                Log.e("FAILURE", "!");
+                int pageNo = mNewsList.size() / PAGE_SIZE + 1;
+                try {
+                    List<SimpleNews> offlineNews = GetNewsListService.getOfflineNewsList(pageNo, PAGE_SIZE, mCategory);
+                    doReceive(offlineNews);
+                    if (!isFavoriteMode) {
+                        Toast.makeText(getActivity(), R.string.toast_offline, Toast.LENGTH_SHORT).show();
+                    }
+                } catch (NewsException e) {
+                    mRefreshLayout.showView(ViewStatus.EMPTY_STATUS);
+                    if (!isFavoriteMode) {
+                        Toast.makeText(getActivity(), R.string.toast_offline_failure, Toast.LENGTH_SHORT).show();
+                    }
+                }
             }
         };
     }

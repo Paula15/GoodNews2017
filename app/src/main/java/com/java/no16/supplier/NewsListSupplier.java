@@ -50,9 +50,7 @@ public class NewsListSupplier implements Supplier<Result<List<SimpleNews>>> {
             Log.e("@" + Thread.currentThread().getName() + " => " + category.getName(), "NewsListSupplier.getNewsList");
             return ret;
         } catch (NewsException e) {
-            Log.e(e.getErrorCode(), e.getMessage());
-            // TODO(zpzhou): Add logic to get offline news.
-            return new ArrayList<SimpleNews>();
+            return null;
         }
     }
 

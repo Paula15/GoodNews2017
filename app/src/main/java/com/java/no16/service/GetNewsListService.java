@@ -91,12 +91,12 @@ public class GetNewsListService {
             }
         }
 
-        Log.e("newsList", "in");
+//        Log.e("newsList", "in");
         for (SimpleNews simpleNews : newsList) {
             simpleNews.separateImageUrl();
-            Log.e("begin", "begin");
+//            Log.e("begin", "begin");
             simpleNews.setMark(CacheService.getMark(simpleNews.getNewsId()));
-            Log.e("end", "end");
+//            Log.e("end", "end");
         }
         Log.e("@" + Thread.currentThread().getName() + " => " + category.getName(), "GetNewsListService.getNewsList");
         return newsList;
