@@ -19,6 +19,8 @@
         android:textOff="Off"
         android:textOn="On"
         android:textSize="25sp"
+        android:background="@android:color/transparent"
+        android:theme="@style/ColorSwitchStyle"
         android:layout_weight="0.16" />
 
     <Switch
