@@ -81,27 +81,27 @@ public class CacheService {
     }
 
     /** Gets all categories. */
-    public static List<Category> getAllCategoryList() {
+    public static synchronized List<Category> getAllCategoryList() {
         return allCategoryList;
     }
 
     /** Gets categories in user's setting. */
-    public static List<Category> getCategoryList() {
+    public static synchronized List<Category> getCategoryList() {
         return categoryList;
     }
 
-    public static void setCategoryList(List<Category> categoryList) {
+    public static synchronized void setCategoryList(List<Category> categoryList) {
         CacheService.categoryList = new ArrayList<>(categoryList);
     }
 
-    public static boolean getFavorite(String newsId) {
+    public static synchronized boolean getFavorite(String newsId) {
         if (!favoriteStatus.containsKey(newsId)) {
             favoriteStatus.put(newsId, dbManager.queryFavorite(newsId));
         }
         return favoriteStatus.get(newsId);
     }
 
-    public static void setFavorite(String newsId, boolean favorite) {
+    public static synchronized void setFavorite(String newsId, boolean favorite) {
         favoriteStatus.put(newsId, favorite);
     }
 
@@ -119,36 +119,32 @@ public class CacheService {
         return DBManager.queryFavoriteList(pageNo, pageSize, category);
     }
 
-    public static void setMark(String newsId) {
-        markStatus.put(newsId, true);
-    }
-
-    public static boolean isNight() {
+    public static synchronized boolean isNight() {
         return night;
     }
 
-    public static void setNight(boolean night) {
+    public static synchronized void setNight(boolean night) {
         CacheService.night = night;
     }
 
-    public static boolean isShowPicture() {
+    public static synchronized boolean isShowPicture() {
         return showPicture;
     }
 
-    public static void setShowImage(boolean showPicture) {
+    public static synchronized void setShowImage(boolean showPicture) {
         CacheService.showPicture = showPicture;
     }
 
-    public static void addKeywords(String keyword) {
+    public static synchronized void addKeywords(String keyword) {
         if (keyword == null || keyword.trim().isEmpty()) return;
         keywords.addAll(new ArrayList<String>(Arrays.asList(keyword.split(";"))));
     }
 
-    public static List<String> getKeywordList() {
+    public static synchronized List<String> getKeywordList() {
         return keywords;
     }
 
-    public static void setKeywordList(List<String> keywords) {
+    public static synchronized void setKeywordList(List<String> keywords) {
         CacheService.keywords = new ArrayList<>(keywords);
     }
 
@@ -159,7 +155,7 @@ public class CacheService {
         return cacheService;
     }
 
-    public static void storeNewsDetail(NewsDetail newsDetail) {
+    public static synchronized void storeNewsDetail(NewsDetail newsDetail) {
         markStatus.put(newsDetail.getNewsId(), true);
         dbManager.add(newsDetail);
     }
@@ -168,16 +164,16 @@ public class CacheService {
         return dbManager.queryNewsList(pageNo, pageSize, category);
     }
 
-    public static NewsDetail getOfflineNewsDetail(String newsId) throws NewsException {
+    public static synchronized NewsDetail getOfflineNewsDetail(String newsId) throws NewsException {
         return dbManager.queryNewsDetail(newsId);
     }
 
-    private static String getKeywordListString() {
+    private static synchronized String getKeywordListString() {
         String listString = keywords.toString();
         return listString.substring(1, listString.length() - 1);
     }
 
-    private static String getCategoryListString() {
+    private static synchronized String getCategoryListString() {
         String listString = categoryList.toString();
         return listString.substring(1, listString.length() - 1);
     }
